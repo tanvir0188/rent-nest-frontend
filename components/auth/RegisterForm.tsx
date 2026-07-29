@@ -26,7 +26,7 @@ export default function RegisterForm() {
 
     return (
         <form action={action} className="space-y-4 max-w-sm mx-auto mt-20 border p-6 rounded-lg shadow-sm">
-            <Link href="/properties" className="font-bold text-center text-4xl block mb-2">RentNest</Link>
+            <Link href="/" className="font-bold text-center text-4xl block mb-2">RentNest</Link>
             <h1 className="text-2xl font-bold text-center mb-6">Register</h1>
             <Input name="email" type="email" placeholder="Email" defaultValue={state?.data?.email || ""} required />
             {state?.errors?.email && <p className="text-red-500">{state.errors.email[0]}</p>}

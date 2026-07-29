@@ -10,7 +10,7 @@ export default async function Navbar() {
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
             <nav className="flex justify-between items-center p-4">
-                <Link href="/properties" className="font-bold text-xl">RentNest</Link>
+                <Link href="/" className="font-bold text-xl">RentNest</Link>
 
                 <div className="flex gap-4">
                     {user ? (
