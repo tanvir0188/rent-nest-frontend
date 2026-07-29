@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 export default function RegisterPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="text-center h-screen flex items-center justify-center">Loading properties ...</div>}>
             <RegisterForm />
 
         </Suspense>

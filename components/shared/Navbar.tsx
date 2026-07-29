@@ -8,27 +8,29 @@ export default async function Navbar() {
     const user = session?.success ? session.data : null;
 
     return (
-        <nav className="flex justify-between items-center p-4 border-b">
-            <Link href="/" className="font-bold text-xl">RentNest</Link>
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+            <nav className="flex justify-between items-center p-4">
+                <Link href="/properties" className="font-bold text-xl">RentNest</Link>
 
-            <div className="flex gap-4">
-                {user ? (
-                    <>
-                        <span className="py-2">Hello, {user.email}</span>
-                        <Link href={`/${user.role.toLowerCase()}`}>
-                            <Button variant="outline">Dashboard</Button>
-                        </Link>
-                        <form action={logout}>
-                            <Button type="submit">Logout</Button>
-                        </form>
-                    </>
-                ) : (
-                    <>
-                        <Link href="/auth/login"><Button variant="outline">Login</Button></Link>
-                        <Link href="/auth/register"><Button>Register</Button></Link>
-                    </>
-                )}
-            </div>
-        </nav>
+                <div className="flex gap-4">
+                    {user ? (
+                        <>
+                            <span className="py-2">Hello, {user.email}</span>
+                            <Link href={`/dashboard/${user.role.toLowerCase()}`}>
+                                <Button variant="outline">Dashboard</Button>
+                            </Link>
+                            <form action={logout}>
+                                <Button type="submit">Logout</Button>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/auth/login"><Button variant="outline">Login</Button></Link>
+                            <Link href="/auth/register"><Button>Register</Button></Link>
+                        </>
+                    )}
+                </div>
+            </nav>
+        </header>
     );
 }
