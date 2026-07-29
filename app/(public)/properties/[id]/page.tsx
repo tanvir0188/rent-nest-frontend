@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { getMe } from "@/service/getMe";
+import { getPropertyDetails } from "../../_acitons/propertyActions";
 
 export default async function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
@@ -14,12 +15,9 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
     const user = session?.success ? session.data : null;
 
     // Fetch details
-    const res = await fetch(`${config.base_url}/api/properties/${id}`, {
-        next: { revalidate: 60 }
-    });
+    const property = await getPropertyDetails(id);
+    console.log(`Property detail: ${JSON.stringify(property)}`)
 
-    const result = await res.json();
-    const property = result.data;
 
     if (!property) {
         return <div className="container py-8 text-center text-red-500 mt-20 text-xl font-bold">Property not found.</div>;
@@ -61,7 +59,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                     <p className="text-muted-foreground">Send a request to the landlord.</p>
                 </div>
                 {user ? (
-                    user.role === "TENANT" ? (
+                    user.profile.role === "TENANT" ? (
                         <Button size="lg">Request to Rent</Button>
                     ) : (
                         <span className="text-muted-foreground italic">Only tenants can request to rent.</span>

@@ -16,7 +16,7 @@ type LoginState = {
     }
 }
 
-export const loginAction = async (redirectTo: string, prevState: any, formData: FormData) => {
+export const loginAction = async (redirectTo: string, prevState: LoginState, formData: FormData) => {
     const rawData = Object.fromEntries(formData);
     const validated = LoginSchema.safeParse(rawData);
 

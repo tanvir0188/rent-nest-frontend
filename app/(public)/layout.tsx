@@ -1,5 +1,6 @@
 import Navbar from "@/components/shared/Navbar";
 import { Suspense } from "react";
+import Providers from "./providers";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -9,7 +10,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 <Navbar />
             </Suspense>
 
-            <main className="px-4">{children}</main>
+            <Providers>
+                <main className="px-4">{children}</main>
+            </Providers>
         </div>
     );
 }
