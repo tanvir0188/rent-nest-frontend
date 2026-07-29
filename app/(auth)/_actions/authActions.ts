@@ -1,7 +1,7 @@
 "use server"
 
 import config from "@/config/config"
-import { RegisterSchema } from "@/lib/types"
+import { LoginSchema, RegisterSchema } from "@/lib/types"
 import jwt, { JwtPayload } from "jsonwebtoken"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
@@ -16,25 +16,34 @@ type LoginState = {
     }
 }
 
-export const loginAction = async (redirectTo: string, prevState: LoginState, formData: FormData) => {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+export const loginAction = async (redirectTo: string, prevState: any, formData: FormData) => {
+    const rawData = Object.fromEntries(formData);
+    const validated = LoginSchema.safeParse(rawData);
 
-    const payload = {
-        email,
-        password
+    if (!validated.success) {
+        return {
+            success: false,
+            statusCode: 400,
+            message: "Validation failed",
+            errors: validated.error.flatten().fieldErrors,
+            data: rawData
+        }
     }
 
-    const res = await fetch(`${config.base_url}/api/auth/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    })
-    const result = await res.json();
+    try {
+        const res = await fetch(`${config.base_url}/api/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(validated.data)
+        })
+        const result = await res.json();
 
-    if (result.success) {
+        if (!result.success) {
+            return { ...result, data: rawData };
+        }
+
         const cookieStore = await cookies()
         cookieStore.set("accessToken", result.data.accessToken, {
             httpOnly: true,
@@ -62,10 +71,14 @@ export const loginAction = async (redirectTo: string, prevState: LoginState, for
             redirect("/dashboard/landlord");
         }
 
+    } catch (error) {
+        return {
+            success: false,
+            statusCode: 500,
+            message: "Backend is sleeping or offline. Try again.",
+            data: rawData
+        }
     }
-    return result;
-
-
 }
 
 type RegisterState = {
@@ -84,7 +97,7 @@ export const registerAction = async (redirectTo: string, prevState: RegisterStat
             statusCode: 400,
             message: "Validation failed",
             errors: validated.error.flatten().fieldErrors,
-            data: null
+            data: rawData
         }
     }
 
@@ -95,7 +108,7 @@ export const registerAction = async (redirectTo: string, prevState: RegisterStat
         name,
         role
     }
-    const res = await fetch(`${config.base_url}/api/auth/register`, {
+    const res = await fetch(`${config.base_url}/api/users/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -103,6 +116,17 @@ export const registerAction = async (redirectTo: string, prevState: RegisterStat
         body: JSON.stringify(payload)
     })
     const result = await res.json();
+    if (result.statusCode === 500) {
+        return {
+            success: false,
+            statusCode: 500,
+            message: "Internal server error",
+            data: rawData
+        }
+    }
+    if (!result.success && result.statusCode === 400) {
+        return result
+    }
 
     if (result.success) {
         redirect("/auth/login")

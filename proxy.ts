@@ -1,4 +1,5 @@
 // import { cookies } from 'next/headers';
+import configuration from "@/config/config";
 import { JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
 import type { NextRequest } from 'next/server';
@@ -22,9 +23,9 @@ export async function proxy(request: NextRequest) {
     let accessToken = request.cookies.get("accessToken")?.value;
     const refreshToken = request.cookies.get("refreshToken")?.value;
 
-    let decodedAccessToken = accessToken ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string) : null;
+    let decodedAccessToken = accessToken ? jwtUtils.verifyToken(accessToken, configuration.access_secret) : null;
 
-    const decodedRefreshToken = refreshToken ? jwtUtils.verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET as string) : null;
+    const decodedRefreshToken = refreshToken ? jwtUtils.verifyToken(refreshToken, configuration.refresh_secret) : null;
 
     if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
         //access token has expired but refresh token is valid, get new access token from backend
@@ -40,7 +41,7 @@ export async function proxy(request: NextRequest) {
             });
 
             accessToken = newAccessToken;
-            decodedAccessToken = jwtUtils.verifyToken(accessToken!, process.env.JWT_ACCESS_SECRET as string);
+            decodedAccessToken = jwtUtils.verifyToken(accessToken!, configuration.access_secret);
 
 
         }

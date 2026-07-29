@@ -1,6 +1,6 @@
 "use client"
 import { useActionState, useEffect } from "react"
-import { loginAction } from "@/app/(auth)/_actions/authActions"
+import { registerAction } from "@/app/(auth)/_actions/authActions"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,24 +15,26 @@ export default function RegisterForm() {
     const redirectTo = searchParams.get("redirectTo") ?? "";
 
     // Connect to server action
-    const [state, action, pending] = useActionState(loginAction.bind(null, redirectTo), null as any);
+    const [state, action, pending] = useActionState(registerAction.bind(null, redirectTo), null as any);
 
     useEffect(() => {
         if (!state) return;
-        if (!state.success) toast.error(state.message || "Login failed");
+        if (!state.success && state.statusCode === 400) toast.error(state.message || "Registration failed");
+        if (!state.success && state.statusCode === 500) toast.error(state.message || "Registration failed");
+        if (state.success) toast.success(state.message || "Registration successful");
     }, [state]);
 
     return (
         <form action={action} className="space-y-4 max-w-sm mx-auto mt-20 border p-6 rounded-lg shadow-sm">
             <h1 className="text-2xl font-bold text-center mb-6">Register</h1>
-            <Input name="email" type="email" placeholder="Email" required />
+            <Input name="email" type="email" placeholder="Email" defaultValue={state?.data?.email || ""} required />
             {state?.errors?.email && <p className="text-red-500">{state.errors.email[0]}</p>}
-            <Input name="password" type="password" placeholder="Password" required />
+            <Input name="password" type="password" placeholder="Password" defaultValue={state?.data?.password || ""} required />
             {state?.errors?.password && <p className="text-red-500">{state.errors.password[0]}</p>}
-            <Input name="name" type="text" placeholder="Name" required />
+            <Input name="name" type="text" placeholder="Name" defaultValue={state?.data?.name || ""} required />
             {state?.errors?.name && <p className="text-red-500">{state.errors.name[0]}</p>}
 
-            <Select name="role" required>
+            <Select name="role" defaultValue={state?.data?.role || ""} required>
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select Role" />
                 </SelectTrigger>

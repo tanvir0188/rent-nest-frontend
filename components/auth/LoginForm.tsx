@@ -22,8 +22,10 @@ export default function LoginForm() {
     return (
         <form action={action} className="space-y-4 max-w-sm mx-auto mt-20 border p-6 rounded-lg shadow-sm">
             <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
-            <Input name="email" type="email" placeholder="Email" required />
-            <Input name="password" type="password" placeholder="Password" required />
+            <Input name="email" type="email" placeholder="Email" defaultValue={state?.data?.email || ""} required />
+            {state?.errors?.email && <p className="text-red-500">{state.errors.email[0]}</p>}
+            <Input name="password" type="password" placeholder="Password" defaultValue={state?.data?.password || ""} required />
+            {state?.errors?.password && <p className="text-red-500">{state.errors.password[0]}</p>}
             <Button type="submit" className="w-full" disabled={pending}>
                 {pending ? "Logging in..." : "Login"}
             </Button>
