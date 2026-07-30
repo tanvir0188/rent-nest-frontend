@@ -30,6 +30,8 @@ export const loginAction = async (redirectTo: string, prevState: LoginState, for
         }
     }
 
+    let redirectUrl = "";
+
     try {
         const res = await fetch(`${config.base_url}/api/auth/login`, {
             method: "POST",
@@ -59,16 +61,13 @@ export const loginAction = async (redirectTo: string, prevState: LoginState, for
         const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
 
         if (redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
-            redirect(redirectTo);
-        }
-        if (decodedToken.role === "ADMIN") {
-            redirect("/dashboard/admin");
-        }
-        if (decodedToken.role === "TENANT") {
-            redirect("/dashboard/tenant");
-        }
-        if (decodedToken.role === "LANDLORD") {
-            redirect("/dashboard/landlord");
+            redirectUrl = redirectTo;
+        } else if (decodedToken.role === "ADMIN") {
+            redirectUrl = "/dashboard/admin";
+        } else if (decodedToken.role === "TENANT") {
+            redirectUrl = "/dashboard/tenant";
+        } else if (decodedToken.role === "LANDLORD") {
+            redirectUrl = "/dashboard/landlord";
         }
 
     } catch (error) {
@@ -78,6 +77,10 @@ export const loginAction = async (redirectTo: string, prevState: LoginState, for
             message: "Backend is sleeping or offline. Try again.",
             data: rawData
         }
+    }
+
+    if (redirectUrl) {
+        redirect(redirectUrl);
     }
 }
 
