@@ -2,6 +2,8 @@ import Navbar from "@/components/shared/Navbar";
 import Sidebar from "./_components/Sidebar";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardLoadingProvider } from "@/components/shared/DashboardLoadingContext";
+import DashboardContentWrapper from "./_components/DashboardContentWrapper";
 
 function SidebarSkeleton() {
     return (
@@ -17,14 +19,20 @@ function SidebarSkeleton() {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <div className="flex flex-1">
-                <Suspense fallback={<SidebarSkeleton />}>
-                    <Sidebar />
-                </Suspense>
-                <main className="flex-1 p-6">{children}</main>
+        <DashboardLoadingProvider>
+            <div className="min-h-screen flex flex-col">
+                <Navbar />
+                <div className="flex flex-1">
+                    <Suspense fallback={<SidebarSkeleton />}>
+                        <Sidebar />
+                    </Suspense>
+                    <main className="flex-1 p-6">
+                        <DashboardContentWrapper>
+                            {children}
+                        </DashboardContentWrapper>
+                    </main>
+                </div>
             </div>
-        </div>
+        </DashboardLoadingProvider>
     );
 }

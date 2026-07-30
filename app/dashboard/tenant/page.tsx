@@ -1,33 +1,7 @@
-import { cookies } from "next/headers";
-import config from "@/config/config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClipboardList, Clock, CheckCircle, XCircle, CheckSquare } from "lucide-react";
+import getTenantOverview from "./_actions/tenantActions";
 
-async function getTenantOverview() {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-
-    if (!accessToken) return null;
-
-    try {
-        const res = await fetch(`${config.base_url}/api/tenant/overview`, {
-            headers: {
-                "Cookie": `accessToken=${accessToken}`,
-                "Authorization": `Bearer ${accessToken}`
-            },
-            next: { revalidate: 0 } // No cache for dashboard data
-        });
-
-        if (res.ok) {
-            const data = await res.json();
-            return data.data; // The backend returns { success, data: { ... } }
-        }
-        return null;
-    } catch (err) {
-        console.error("Failed to fetch tenant overview", err);
-        return null;
-    }
-}
 
 export default async function TenantDashboardOverview() {
     const overview = await getTenantOverview();
@@ -75,7 +49,7 @@ export default async function TenantDashboardOverview() {
         <div className="space-y-6">
             <h1 className="text-3xl font-bold tracking-tight">Tenant Overview</h1>
             <p className="text-muted-foreground">Manage your rental requests and track their status here.</p>
-            
+
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mt-6">
                 {statCards.map((stat, i) => (
                     <Card key={i} className="shadow-sm hover:shadow-md transition-shadow">
