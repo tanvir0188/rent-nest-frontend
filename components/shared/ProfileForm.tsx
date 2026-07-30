@@ -40,6 +40,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
             if (res.success) {
                 toast.success(res.message || "Profile updated successfully!")
+                
             } else {
                 toast.error(res.message || "Failed to update profile.")
             }

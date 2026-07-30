@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClipboardList, Clock, CheckCircle, XCircle, CheckSquare } from "lucide-react";
-import getTenantOverview from "./_actions/tenantActions";
+import { getTenantOverview } from "./_actions/tenantActions";
+
 
 
 export default async function TenantDashboardOverview() {

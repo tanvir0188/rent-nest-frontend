@@ -9,32 +9,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { getRentalRequests } from "../_actions/tenantActions";
 
-async function getRentalRequests() {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
 
-    if (!accessToken) return null;
-
-    try {
-        const res = await fetch(`${config.base_url}/api/rentals/`, {
-            headers: {
-                "Cookie": `accessToken=${accessToken}`,
-                "Authorization": `Bearer ${accessToken}`
-            },
-            next: { revalidate: 0 }
-        });
-
-        if (res.ok) {
-            const data = await res.json();
-            return data.data; // Array of rental requests
-        }
-        return null;
-    } catch (err) {
-        console.error("Failed to fetch rental requests", err);
-        return null;
-    }
-}
 
 export default async function TenantRequestsPage() {
     const requests = await getRentalRequests();

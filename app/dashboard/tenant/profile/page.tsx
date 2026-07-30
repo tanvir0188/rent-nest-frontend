@@ -8,10 +8,10 @@ export default async function TenantProfilePage() {
     const initialData = {
         name: user?.name || user?.profile?.name || "",
         email: user?.email || user?.profile?.email || "",
-        bio: user?.bio || user?.profile?.bio || "",
-        profilePhoto: user?.profilePhoto || user?.profile?.profilePhoto || ""
+        bio: user?.profile?.profile.bio || "",
+        profilePhoto: user?.profile?.profile.profilePhoto || ""
     };
-
+    console.log("Initial Data", initialData);
     return (
         <div className="space-y-6">
             <div>
