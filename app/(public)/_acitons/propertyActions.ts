@@ -1,7 +1,37 @@
 "use server";
 
 import config from "@/config/config";
+import { cookies } from "next/headers";
 
+export const requestRental = async (propertyId: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value || null;
+    
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/rentals/${propertyId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            }
+        });
+
+        const result = await res.json().catch(() => ({}));
+        if (res.ok) {
+            return { success: true, message: result.message || "Request sent successfully" };
+        } else {
+            return { success: false, message: result.message || `Error: ${res.status}` };
+        }
+    } catch (err) {
+        console.error("Rental request failed", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+}
 export interface Property {
     id: string;
     title: string;

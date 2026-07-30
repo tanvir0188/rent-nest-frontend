@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { getMe } from "@/service/getMe";
 import { getPropertyDetails } from "../../_acitons/propertyActions";
+import { RequestRentDialog } from "../../_components/RequestRentDialog";
 
 export default async function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
@@ -60,7 +61,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                 </div>
                 {user ? (
                     user.profile.role === "TENANT" ? (
-                        <Button size="lg">Request to Rent</Button>
+                        <RequestRentDialog propertyId={id} />
                     ) : (
                         <span className="text-muted-foreground italic">Only tenants can request to rent.</span>
                     )
