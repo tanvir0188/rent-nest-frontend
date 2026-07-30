@@ -61,7 +61,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     return (
         <Card className="max-w-xl mx-auto shadow-xl border border-zinc-200/50 bg-white/80 backdrop-blur-md transition-all duration-300 hover:shadow-2xl">
             <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl font-bold tracking-tight bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl font-bold tracking-tight bg-linear-to-r from-zinc-900 to-zinc-700 bg-clip-text text-transparent">
                     Profile Settings
                 </CardTitle>
                 <CardDescription className="text-zinc-500">
@@ -146,7 +146,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
                                 rows={4}
-                                className="min-h-[100px] w-full rounded-2xl border border-input bg-input/30 px-3 py-2 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                                className="min-h-25 w-full rounded-2xl border border-input bg-input/30 px-3 py-2 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                             />
                         </div>
                     </div>

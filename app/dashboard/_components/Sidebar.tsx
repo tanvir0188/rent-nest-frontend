@@ -1,6 +1,6 @@
 import { NavPathLink as Link } from "@/components/shared/NavPathLink";
 import { getMe } from "@/service/getMe";
-import { Home, List, User } from "lucide-react";
+import { Home, List, Building, User } from "lucide-react";
 import { MobileSidebarDrawer } from "./MobileSidebarDrawer";
 
 export default async function Sidebar() {
@@ -29,7 +29,25 @@ export default async function Sidebar() {
                     </Link>
                 </>
             )}
-            {role !== "TENANT" && (
+
+            {role === "LANDLORD" && (
+                <>
+                    <Link href="/dashboard/landlord" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <Home className="w-5 h-5" />
+                        <span>Overview</span>
+                    </Link>
+                    <Link href="/dashboard/landlord/properties" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <Building className="w-5 h-5" />
+                        <span>My Properties</span>
+                    </Link>
+                    <Link href="/dashboard/landlord/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <User className="w-5 h-5" />
+                        <span>My Profile</span>
+                    </Link>
+                </>
+            )}
+
+            {role !== "TENANT" && role !== "LANDLORD" && (
                 <div className="px-4 py-2 text-muted-foreground italic">
                     No links configured for {role}.
                 </div>
