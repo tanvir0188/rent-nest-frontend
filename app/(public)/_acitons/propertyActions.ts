@@ -2,6 +2,7 @@
 
 import config from "@/config/config";
 import { cookies } from "next/headers";
+import { revalidateTag } from "next/cache";
 
 export const requestRental = async (propertyId: string) => {
     const cookieStore = await cookies();
@@ -23,6 +24,7 @@ export const requestRental = async (propertyId: string) => {
 
         const result = await res.json().catch(() => ({}));
         if (res.ok) {
+            revalidateTag("rental-requests", "max");
             return { success: true, message: result.message || "Request sent successfully" };
         } else {
             return { success: false, message: result.message || `Error: ${res.status}` };

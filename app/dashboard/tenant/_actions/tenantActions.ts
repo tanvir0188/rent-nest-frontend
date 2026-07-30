@@ -41,7 +41,7 @@ export const getRentalRequests = async () => {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
             },
-            next: { revalidate: 0 }
+            next: { tags: ["rental-requests"] }
         });
 
         if (res.ok) {
@@ -52,5 +52,31 @@ export const getRentalRequests = async () => {
     } catch (err) {
         console.error("Failed to fetch rental requests", err);
         return null;
+    }
+}
+
+export const getRentalDetails = async (rentalId: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) return { success: false, message: "Unauthorized" };
+
+    try {
+        const res = await fetch(`${config.base_url}/api/rentals/${rentalId}`, {
+            headers: {
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            next: { revalidate: 60 }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            return { success: true, data: data.data };
+        }
+        return { success: false, message: "Failed to fetch rental details" };
+    } catch (err) {
+        console.error("Failed to fetch rental details", err);
+        return { success: false, message: "An unexpected error occurred" };
     }
 }
