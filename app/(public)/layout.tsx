@@ -6,9 +6,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     return (
         <div>
 
-            <Suspense fallback={<div>Loading...</div>}>
-                <Navbar />
-            </Suspense>
+            <Navbar />
 
             <Providers>
                 <main className="px-4">{children}</main>
