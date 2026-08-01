@@ -23,8 +23,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { updatePaymentStatus } from "@/app/dashboard/admin/_actions/adminActions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function PaymentsTable({ payments, isAdmin = false }: { payments: any[], isAdmin?: boolean }) {
+    const router = useRouter();
     const [selectedPayment, setSelectedPayment] = useState<any | null>(null);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -33,6 +35,7 @@ export function PaymentsTable({ payments, isAdmin = false }: { payments: any[], 
         const res = await updatePaymentStatus(paymentId, status);
         if (res.success) {
             toast.success(res.message);
+            router.refresh();
         } else {
             toast.error(res.message);
         }

@@ -297,3 +297,40 @@ export const updateRequestStatus = async (requestId: string, status: "APPROVED" 
         return { success: false, message: "An unexpected error occurred." };
     }
 };
+
+export const completeRentalRequest = async (requestId: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized. Please log in." };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/landlord/requests/complete/${requestId}`, {
+            method: "PATCH",
+            headers: {
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            }
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            revalidateTag("landlord-requests", "max");
+            return {
+                success: true,
+                message: result.message || "Request marked as completed successfully!"
+            };
+        } else {
+            return {
+                success: false,
+                message: result.message || `Error: ${res.status}`
+            };
+        }
+    } catch (err) {
+        console.error("Failed to complete request", err);
+        return { success: false, message: "An unexpected error occurred." };
+    }
+};

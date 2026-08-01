@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, X, Loader2, Eye } from "lucide-react";
+import { Check, X, Loader2, Eye, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RentalDetailsModal } from "./RentalDetailsModal";
@@ -20,10 +20,18 @@ import { getRentalDetails } from "@/app/dashboard/tenant/_actions/tenantActions"
 export interface RentalRequestsTableProps {
     requests: any[];
     onUpdateStatus: (id: string, status: "APPROVED" | "REJECTED") => Promise<{ success: boolean; message: string }>;
+    onCompleteRequest?: (id: string) => Promise<{ success: boolean; message: string }>;
     isAdmin?: boolean;
+    isLandlord?: boolean;
 }
 
-export function RentalRequestsTable({ requests = [], onUpdateStatus, isAdmin = false }: RentalRequestsTableProps) {
+export function RentalRequestsTable({ 
+    requests = [], 
+    onUpdateStatus, 
+    onCompleteRequest,
+    isAdmin = false,
+    isLandlord = false
+}: RentalRequestsTableProps) {
     const router = useRouter();
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [selectedRentalId, setSelectedRentalId] = useState<string | null>(null);
@@ -41,6 +49,26 @@ export function RentalRequestsTable({ requests = [], onUpdateStatus, isAdmin = f
             }
         } catch (err) {
             toast.error("Failed to update request");
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
+    const handleComplete = async (id: string) => {
+        if (!onCompleteRequest) return;
+        if (!confirm("Are you sure you want to mark this request as completed?")) return;
+        
+        setProcessingId(id);
+        try {
+            const res = await onCompleteRequest(id);
+            if (res.success) {
+                toast.success(res.message);
+                router.refresh();
+            } else {
+                toast.error(res.message);
+            }
+        } catch (err) {
+            toast.error("Failed to mark request as complete");
         } finally {
             setProcessingId(null);
         }
@@ -94,8 +122,11 @@ export function RentalRequestsTable({ requests = [], onUpdateStatus, isAdmin = f
                                     </TableCell>
                                     <TableCell>
                                         <Badge
-                                            variant={req.status === "APPROVED" ? "default" : req.status === "REJECTED" ? "destructive" : "secondary"}
-                                            className={req.status === "APPROVED" ? "bg-green-100 text-green-800 border-green-200" : ""}
+                                            variant={req.status === "APPROVED" || req.status === "COMPLETED" ? "default" : req.status === "REJECTED" ? "destructive" : "secondary"}
+                                            className={
+                                                req.status === "APPROVED" ? "bg-green-100 text-green-800 border-green-200" : 
+                                                req.status === "COMPLETED" ? "bg-blue-100 text-blue-800 border-blue-200" : ""
+                                            }
                                         >
                                             {req.status}
                                         </Badge>
@@ -129,7 +160,21 @@ export function RentalRequestsTable({ requests = [], onUpdateStatus, isAdmin = f
                                                 )}
                                             </>
                                         )}
-                                        {!isAdmin && req.status !== "PENDING" && (
+                                        
+                                        {isLandlord && req.status === "ACTIVE" && onCompleteRequest && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                title="Mark as Completed"
+                                                disabled={processingId === req.id}
+                                                onClick={() => handleComplete(req.id)}
+                                                className="rounded-xl hover:bg-blue-50 text-blue-600"
+                                            >
+                                                {processingId === req.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                                            </Button>
+                                        )}
+
+                                        {!isAdmin && req.status !== "PENDING" && req.status !== "ACTIVE" && (
                                             <span className="text-xs text-muted-foreground mr-2">Actioned</span>
                                         )}
                                         <Button

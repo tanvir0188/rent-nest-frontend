@@ -1,4 +1,4 @@
-import { getLandlordRequests, updateRequestStatus } from "../_actions/landlordActions";
+import { getLandlordRequests, updateRequestStatus, completeRentalRequest } from "../_actions/landlordActions";
 import { RentalRequestsTable } from "@/components/shared/RentalRequestsTable";
 import { PaginationBlock } from "@/components/shared/PaginationBlock";
 
@@ -15,7 +15,12 @@ export default async function LandlordRequestsPage({ searchParams }: Props) {
 
     return (
         <div className="space-y-6 max-w-6xl mx-auto w-full">
-            <RentalRequestsTable requests={requests || []} onUpdateStatus={updateRequestStatus} />
+            <RentalRequestsTable 
+                requests={requests || []} 
+                onUpdateStatus={updateRequestStatus} 
+                onCompleteRequest={completeRentalRequest}
+                isLandlord={true}
+            />
             <PaginationBlock meta={meta} />
         </div>
     );
