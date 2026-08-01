@@ -1,9 +1,18 @@
 import { getAdminRentalRequests, adminUpdateRentalRequestStatus } from "../_actions/adminActions";
 import { RentalRequestsTable } from "@/components/shared/RentalRequestsTable";
 import { Card } from "@/components/ui/card";
+import { PaginationBlock } from "@/components/shared/PaginationBlock";
 
-export default async function AdminRentalsPage() {
-    const requests = await getAdminRentalRequests() || [];
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function AdminRentalsPage({ searchParams }: Props) {
+    const sp = await searchParams;
+    const page = typeof sp.page === "string" ? parseInt(sp.page, 10) : 1;
+    const size = typeof sp.size === "string" ? parseInt(sp.size, 10) : 10;
+
+    const { data: requests, meta } = await getAdminRentalRequests(page, size);
 
     return (
         <div className="space-y-6 max-w-6xl mx-auto w-full">
@@ -14,10 +23,11 @@ export default async function AdminRentalsPage() {
 
             <Card className="p-6 border-zinc-200/80 shadow-sm rounded-2xl bg-white">
                 <RentalRequestsTable 
-                    requests={requests} 
+                    requests={requests || []} 
                     onUpdateStatus={adminUpdateRentalRequestStatus} 
                     isAdmin={true}
                 />
+                <PaginationBlock meta={meta} />
             </Card>
         </div>
     );

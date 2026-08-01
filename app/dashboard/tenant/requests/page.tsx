@@ -1,12 +1,17 @@
 import { getRentalRequests } from "../_actions/tenantActions";
 import { TenantRequestsTable } from "../_components/TenantRequestsTable";
+import { PaginationBlock } from "@/components/shared/PaginationBlock";
 
-export default async function TenantRequestsPage() {
-    const requests = await getRentalRequests();
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
-    if (!requests) {
-        return <div className="text-red-500">Failed to load rental requests or unauthorized.</div>;
-    }
+export default async function TenantRequestsPage({ searchParams }: Props) {
+    const sp = await searchParams;
+    const page = typeof sp.page === "string" ? parseInt(sp.page, 10) : 1;
+    const size = typeof sp.size === "string" ? parseInt(sp.size, 10) : 10;
+
+    const { data: requests, meta } = await getRentalRequests(page, size);
 
     return (
         <div className="space-y-6">
@@ -15,7 +20,8 @@ export default async function TenantRequestsPage() {
                 <p className="text-muted-foreground mt-2">View and manage all your property rental requests.</p>
             </div>
 
-            <TenantRequestsTable requests={requests} />
+            <TenantRequestsTable requests={requests || []} />
+            <PaginationBlock meta={meta} />
         </div>
     );
 }

@@ -35,14 +35,14 @@ export const adminOverview = async () => {
     }
 };
 
-export const getUsers = async () => {
+export const getUsers = async (page: number = 1, size: number = 10) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
-    if (!accessToken) return null;
+    if (!accessToken) return { data: [], meta: null };
 
     try {
-        const res = await fetch(`${config.base_url}/api/users`, {
+        const res = await fetch(`${config.base_url}/api/users?page=${page}&size=${size}`, {
             headers: {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
@@ -55,13 +55,15 @@ export const getUsers = async () => {
 
         if (res.ok) {
             const data = await res.json();
-            console.log(`Users: ${JSON.stringify(data.data)}`)
-            return data.data || [];
+            return {
+                data: data.data || [],
+                meta: data.meta || null
+            };
         }
-        return [];
+        return { data: [], meta: null };
     } catch (err) {
         console.error("Failed to fetch users", err);
-        return [];
+        return { data: [], meta: null };
     }
 };
 
@@ -172,14 +174,14 @@ export const adminUpdateRentalRequestStatus = async (requestId: string, status: 
     }
 };
 
-export const getAdminRentalRequests = async () => {
+export const getAdminRentalRequests = async (page: number = 1, size: number = 10) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
-    if (!accessToken) return null;
+    if (!accessToken) return { data: [], meta: null };
 
     try {
-        const res = await fetch(`${config.base_url}/api/admin/rentals`, {
+        const res = await fetch(`${config.base_url}/api/admin/rentals?page=${page}&size=${size}`, {
             headers: {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
@@ -192,11 +194,14 @@ export const getAdminRentalRequests = async () => {
 
         if (res.ok) {
             const data = await res.json();
-            return data.data;
+            return {
+                data: data.data || [],
+                meta: data.meta || null
+            };
         }
-        return null;
+        return { data: [], meta: null };
     } catch (err) {
         console.error("Failed to fetch admin rental requests", err);
-        return null;
+        return { data: [], meta: null };
     }
 };

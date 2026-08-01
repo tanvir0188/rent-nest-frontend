@@ -12,19 +12,19 @@ export type CreatePropertyPayload = z.infer<typeof CreatePropertySchema>;
 
 export type UpdatePropertyPayload = z.infer<typeof UpdatePropertySchema>;
 
-export const getLandlordProperties = async () => {
+export const getLandlordProperties = async (page: number = 1, size: number = 10) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
-    if (!accessToken) return null;
+    if (!accessToken) return { data: [], meta: null };
 
     const session = await getMe();
-    if (!session || !session.data) return null;
+    if (!session || !session.data) return { data: [], meta: null };
 
     const me = session.data;
 
     try {
-        const res = await fetch(`${config.base_url}/api/landlord/properties`, {
+        const res = await fetch(`${config.base_url}/api/landlord/properties?page=${page}&size=${size}`, {
             headers: {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
@@ -37,13 +37,15 @@ export const getLandlordProperties = async () => {
 
         if (res.ok) {
             const data = await res.json();
-            console.log(data.data);
-            return data.data;
+            return {
+                data: data.data || [],
+                meta: data.meta || null
+            };
         }
-        return null;
+        return { data: [], meta: null };
     } catch (err) {
         console.error("Failed to fetch landlord properties", err);
-        return null;
+        return { data: [], meta: null };
     }
 };
 
@@ -225,14 +227,14 @@ export const landlordOverview = async () => {
     }
 };
 
-export const getLandlordRequests = async () => {
+export const getLandlordRequests = async (page: number = 1, size: number = 10) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
-    if (!accessToken) return null;
+    if (!accessToken) return { data: [], meta: null };
 
     try {
-        const res = await fetch(`${config.base_url}/api/landlord/requests`, {
+        const res = await fetch(`${config.base_url}/api/landlord/requests?page=${page}&size=${size}`, {
             headers: {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
@@ -245,12 +247,15 @@ export const getLandlordRequests = async () => {
 
         if (res.ok) {
             const data = await res.json();
-            return data.data;
+            return {
+                data: data.data || [],
+                meta: data.meta || null
+            };
         }
-        return null;
+        return { data: [], meta: null };
     } catch (err) {
         console.error("Failed to fetch landlord requests", err);
-        return null;
+        return { data: [], meta: null };
     }
 };
 

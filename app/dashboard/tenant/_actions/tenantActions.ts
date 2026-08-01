@@ -29,14 +29,14 @@ export const getTenantOverview = async () => {
     }
 }
 
-export const getRentalRequests = async () => {
+export const getRentalRequests = async (page: number = 1, size: number = 10) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
-    if (!accessToken) return null;
+    if (!accessToken) return { data: [], meta: null };
 
     try {
-        const res = await fetch(`${config.base_url}/api/rentals/`, {
+        const res = await fetch(`${config.base_url}/api/rentals/?page=${page}&size=${size}`, {
             headers: {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
@@ -46,12 +46,15 @@ export const getRentalRequests = async () => {
 
         if (res.ok) {
             const data = await res.json();
-            return data.data; // Array of rental requests
+            return {
+                data: data.data || [],
+                meta: data.meta || null
+            };
         }
-        return null;
+        return { data: [], meta: null };
     } catch (err) {
         console.error("Failed to fetch rental requests", err);
-        return null;
+        return { data: [], meta: null };
     }
 }
 
