@@ -1,6 +1,6 @@
 import { NavPathLink as Link } from "@/components/shared/NavPathLink";
 import { getMe } from "@/service/getMe";
-import { Home, List, Building, User, Users, Key, Filter } from "lucide-react";
+import { Home, List, Building, User, Users, Key, Filter, CreditCard } from "lucide-react";
 import { MobileSidebarDrawer } from "./MobileSidebarDrawer";
 
 export default async function Sidebar() {
@@ -22,6 +22,10 @@ export default async function Sidebar() {
                     <Link href="/dashboard/tenant/requests" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
                         <List className="w-5 h-5" />
                         <span>Rental Requests</span>
+                    </Link>
+                    <Link href="/dashboard/tenant/payments" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <CreditCard className="w-5 h-5" />
+                        <span>Payments</span>
                     </Link>
                     <Link href="/dashboard/tenant/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
                         <User className="w-5 h-5" />
@@ -68,6 +72,10 @@ export default async function Sidebar() {
                     <Link href="/dashboard/admin/properties" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
                         <Building className="w-5 h-5" />
                         <span>Properties</span>
+                    </Link>
+                    <Link href="/dashboard/admin/payments" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <CreditCard className="w-5 h-5" />
+                        <span>Payments</span>
                     </Link>
                     <Link href="/dashboard/admin/filters" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
                         <Filter className="w-5 h-5" />
