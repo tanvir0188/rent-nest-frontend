@@ -205,3 +205,62 @@ export const getAdminRentalRequests = async (page: number = 1, size: number = 10
         return { data: [], meta: null };
     }
 };
+export const deleteCategory = async (id: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/category/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            }
+        });
+
+        const result = await res.json().catch(() => ({}));
+        if (res.ok) {
+            revalidateTag("filters");
+            return { success: true, message: result.message || "Category deleted successfully" };
+        } else {
+            return { success: false, message: result.message || `Error: ${res.status}` };
+        }
+    } catch (err) {
+        console.error("Failed to delete category", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+};
+
+export const deleteAmenity = async (id: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/amenity/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            }
+        });
+
+        const result = await res.json().catch(() => ({}));
+        if (res.ok) {
+            revalidateTag("filters");
+            return { success: true, message: result.message || "Amenity deleted successfully" };
+        } else {
+            return { success: false, message: result.message || `Error: ${res.status}` };
+        }
+    } catch (err) {
+        console.error("Failed to delete amenity", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+};

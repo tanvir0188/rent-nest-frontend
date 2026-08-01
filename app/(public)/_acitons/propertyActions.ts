@@ -103,7 +103,7 @@ export const getPropertyDetails = async (id: string): Promise<Property | null> =
 export const getFilters = async () => {
     try {
         const res = await fetch(`${config.base_url}/api/filters`, {
-            next: { revalidate: 60 }
+            next: { revalidate: 60 * 60, tags: ["filters"] }
         });
         if (res.ok) {
             const result = await res.json();
