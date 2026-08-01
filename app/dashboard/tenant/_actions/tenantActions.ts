@@ -70,7 +70,7 @@ export const getRentalDetails = async (rentalId: string) => {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
             },
-            next: { revalidate: 60 }
+            next: { revalidate: 0 }
         });
 
         if (res.ok) {
@@ -80,6 +80,38 @@ export const getRentalDetails = async (rentalId: string) => {
         return { success: false, message: "Failed to fetch rental details" };
     } catch (err) {
         console.error("Failed to fetch rental details", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+}
+
+export const createCheckoutSession = async (rentalId: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) return { success: false, message: "Unauthorized" };
+
+    try {
+        const res = await fetch(`${config.base_url}/api/checkout-session/${rentalId}`, {
+            method: "POST",
+            headers: {
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (res.ok && data?.data) {
+            // Usually data.data contains the session URL or the checkout URL directly
+            // or the data itself is the URL if the backend responds that way.
+            // We'll return the whole data so the client can extract it.
+            console.log(data.data)
+            return { success: true, url: data.data.url || data.data };
+        }
+        return { success: false, message: data?.message || "Failed to create checkout session" };
+    } catch (err) {
+        console.error("Failed to create checkout session", err);
         return { success: false, message: "An unexpected error occurred" };
     }
 }

@@ -12,24 +12,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "./StatusBadge";
-import { getRentalDetails } from "@/app/dashboard/tenant/_actions/tenantActions";
-import { MapPin, DollarSign, Calendar, Home, User, Mail, Info } from "lucide-react";
+import { getRentalDetails, createCheckoutSession } from "@/app/dashboard/tenant/_actions/tenantActions";
+import { MapPin, DollarSign, Calendar, Home, User, Mail, Info, Loader2, CreditCard } from "lucide-react";
+import { toast } from "sonner";
 
 export interface RentalDetailsModalProps {
     rentalId: string | null;
     initialData?: any;
     onClose: () => void;
     fetchDetailsAction?: (rentalId: string) => Promise<{ success: boolean; data?: any }>;
+    isTenant?: boolean;
 }
 
 export function RentalDetailsModal({
     rentalId,
     initialData,
     onClose,
-    fetchDetailsAction = getRentalDetails
+    fetchDetailsAction = getRentalDetails,
+    isTenant = false
 }: RentalDetailsModalProps) {
     const [details, setDetails] = useState<any>(initialData || null);
     const [loading, setLoading] = useState(false);
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     useEffect(() => {
         if (!rentalId) return;
@@ -51,6 +55,18 @@ export function RentalDetailsModal({
             isMounted = false;
         };
     }, [rentalId, fetchDetailsAction]);
+
+    const handlePayment = async () => {
+        if (!rentalId) return;
+        setIsCheckingOut(true);
+        const res = await createCheckoutSession(rentalId);
+        if (res.success && res.url) {
+            window.location.href = res.url;
+        } else {
+            setIsCheckingOut(false);
+            toast.error(res.message || "Failed to initiate payment");
+        }
+    };
 
     const isOpen = Boolean(rentalId);
 
@@ -165,10 +181,20 @@ export function RentalDetailsModal({
                     </div>
                 )}
 
-                <DialogFooter className="sm:justify-end pt-2">
+                <DialogFooter className="sm:justify-end pt-2 gap-2">
                     <Button variant="outline" onClick={onClose} className="rounded-2xl">
                         Close
                     </Button>
+                    {isTenant && status === "APPROVED" && (
+                        <Button 
+                            onClick={handlePayment} 
+                            disabled={isCheckingOut} 
+                            className="rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white"
+                        >
+                            {isCheckingOut ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CreditCard className="w-4 h-4 mr-2" />}
+                            Make Payment
+                        </Button>
+                    )}
                 </DialogFooter>
             </DialogContent>
         </Dialog>

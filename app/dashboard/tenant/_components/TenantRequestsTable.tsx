@@ -70,6 +70,7 @@ export function TenantRequestsTable({ requests }: { requests: any[] }) {
                 rentalId={selectedRental?.id || null}
                 initialData={selectedRental}
                 onClose={() => setSelectedRental(null)}
+                isTenant={true}
             />
         </>
     );
