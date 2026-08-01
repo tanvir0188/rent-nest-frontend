@@ -6,7 +6,7 @@ import { MobileSidebarDrawer } from "./MobileSidebarDrawer";
 export default async function Sidebar() {
     const session = await getMe();
     const user = session?.success ? session.data : null;
-    
+
     if (!user) return null;
 
     const role = user.profile.role;
@@ -51,7 +51,24 @@ export default async function Sidebar() {
                 </>
             )}
 
-            {role !== "TENANT" && role !== "LANDLORD" && (
+            {role === "ADMIN" && (
+                <>
+                    <Link href="/dashboard/admin" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <Home className="w-5 h-5" />
+                        <span>Overview</span>
+                    </Link>
+                    <Link href="/dashboard/admin/users" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <List className="w-5 h-5" />
+                        <span>Users</span>
+                    </Link>
+                    <Link href="/dashboard/admin/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <User className="w-5 h-5" />
+                        <span>My Profile</span>
+                    </Link>
+                </>
+            )}
+
+            {role !== "TENANT" && role !== "LANDLORD" && role !== "ADMIN" && (
                 <div className="px-4 py-2 text-muted-foreground italic">
                     No links configured for {role}.
                 </div>

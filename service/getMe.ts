@@ -21,6 +21,7 @@ export const getMe = cache(async () => {
         });
 
         const data = await res.json().catch(() => ({ success: false }));
+        console.log(`Me: ${JSON.stringify(data)}`)
         return data;
     } catch (err) {
         console.error("Failed to fetch getMe", err);

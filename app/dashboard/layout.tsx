@@ -21,7 +21,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
         <DashboardLoadingProvider>
             <div className="min-h-screen flex flex-col">
-                <Navbar />
                 <div className="flex flex-1 flex-col md:flex-row">
                     <Suspense fallback={<SidebarSkeleton />}>
                         <Sidebar />

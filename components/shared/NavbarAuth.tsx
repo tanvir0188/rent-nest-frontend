@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export default async function NavbarAuth() {
     const session = await getMe();
+    console.log('session', session);
     const user = session?.success ? session.data : null;
 
     if (user) {

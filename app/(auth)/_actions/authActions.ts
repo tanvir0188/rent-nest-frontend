@@ -3,6 +3,7 @@
 import config from "@/config/config"
 import { LoginSchema, RegisterSchema } from "@/lib/types"
 import jwt, { JwtPayload } from "jsonwebtoken"
+import { revalidateTag } from "next/cache"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -59,6 +60,8 @@ export const loginAction = async (redirectTo: string, prevState: LoginState, for
         })
 
         const decodedToken = jwt.decode(result.data.accessToken) as JwtPayload;
+
+        revalidateTag("my-profile", "max");
 
         if (redirectTo && typeof redirectTo === "string" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
             redirectUrl = redirectTo;
