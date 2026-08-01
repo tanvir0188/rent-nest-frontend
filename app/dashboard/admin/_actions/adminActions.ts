@@ -224,7 +224,7 @@ export const deleteCategory = async (id: string) => {
 
         const result = await res.json().catch(() => ({}));
         if (res.ok) {
-            revalidateTag("filters");
+            revalidateTag("filters", "max");
             return { success: true, message: result.message || "Category deleted successfully" };
         } else {
             return { success: false, message: result.message || `Error: ${res.status}` };
@@ -254,13 +254,145 @@ export const deleteAmenity = async (id: string) => {
 
         const result = await res.json().catch(() => ({}));
         if (res.ok) {
-            revalidateTag("filters");
+            revalidateTag("filters", "max");
             return { success: true, message: result.message || "Amenity deleted successfully" };
         } else {
             return { success: false, message: result.message || `Error: ${res.status}` };
         }
     } catch (err) {
         console.error("Failed to delete amenity", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+};
+
+export const createCategory = async (title: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/category`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ title })
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            revalidateTag("filters", "max");
+            return { success: true, message: result.message || "Category created successfully!" };
+        } else {
+            return { success: false, message: result.message || `Error: ${res.status}` };
+        }
+    } catch (err) {
+        console.error("Failed to create category", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+};
+
+export const createAmenity = async (title: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/amenity`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ title })
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            revalidateTag("filters", "max");
+            return { success: true, message: result.message || "Amenity created successfully!" };
+        } else {
+            return { success: false, message: result.message || `Error: ${res.status}` };
+        }
+    } catch (err) {
+        console.error("Failed to create amenity", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+};
+
+export const editCategory = async (id: string, title: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/category/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ title })
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            revalidateTag("filters", "max");
+            return { success: true, message: result.message || "Category updated successfully!" };
+        } else {
+            return { success: false, message: result.message || `Error: ${res.status}` };
+        }
+    } catch (err) {
+        console.error("Failed to edit category", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+};
+
+export const editAmenity = async (id: string, title: string) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/amenity/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ title })
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            revalidateTag("filters", "max");
+            return { success: true, message: result.message || "Amenity updated successfully!" };
+        } else {
+            return { success: false, message: result.message || `Error: ${res.status}` };
+        }
+    } catch (err) {
+        console.error("Failed to edit amenity", err);
         return { success: false, message: "An unexpected error occurred" };
     }
 };
