@@ -61,6 +61,14 @@ export default async function Sidebar() {
                         <List className="w-5 h-5" />
                         <span>Users</span>
                     </Link>
+                    <Link href="/dashboard/admin/rentals" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <List className="w-5 h-5" />
+                        <span>Rentals</span>
+                    </Link>
+                    <Link href="/dashboard/admin/properties" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <Building className="w-5 h-5" />
+                        <span>Properties</span>
+                    </Link>
                     <Link href="/dashboard/admin/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
                         <User className="w-5 h-5" />
                         <span>My Profile</span>

@@ -56,7 +56,7 @@ export function RentalDetailsModal({
 
     const property = details?.property || initialData?.property;
     const landlord = details?.landlord || property?.landlord;
-    const tenant = details?.tenant || initialData?.tenant;
+    const tenant = details?.tenant || details?.user || initialData?.tenant || initialData?.user;
     const status = details?.status || initialData?.status;
     const createdAt = details?.createdAt || initialData?.createdAt;
 

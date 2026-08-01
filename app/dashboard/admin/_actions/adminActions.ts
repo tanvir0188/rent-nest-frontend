@@ -132,3 +132,71 @@ export const toggleUserStatus = async (userId: string) => {
         return { success: false, message: "An unexpected error occurred." };
     }
 };
+
+export const adminUpdateRentalRequestStatus = async (requestId: string, status: "APPROVED" | "REJECTED") => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized. Please log in." };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/rentals/${requestId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ status })
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            revalidateTag("admin-rentals", "max");
+            return {
+                success: true,
+                message: result.message || `Request ${status.toLowerCase()} successfully!`
+            };
+        } else {
+            return {
+                success: false,
+                message: result.message || `Error: ${res.status}`
+            };
+        }
+    } catch (err) {
+        console.error("Failed to update request status", err);
+        return { success: false, message: "An unexpected error occurred." };
+    }
+};
+
+export const getAdminRentalRequests = async () => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) return null;
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/rentals`, {
+            headers: {
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            next: {
+                revalidate: 60 * 60,
+                tags: ["admin-rentals"]
+            }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            return data.data;
+        }
+        return null;
+    } catch (err) {
+        console.error("Failed to fetch admin rental requests", err);
+        return null;
+    }
+};

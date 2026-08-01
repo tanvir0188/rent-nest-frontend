@@ -1,5 +1,5 @@
 import { getLandlordProperties } from "../_actions/landlordActions";
-import { LandlordPropertiesTable } from "../_components/LandlordPropertiesTable";
+import { PropertiesTable } from "@/components/shared/PropertiesTable";
 import { getFilters } from "@/app/(public)/_acitons/propertyActions";
 
 export default async function LandlordPropertiesPage() {
@@ -15,7 +15,7 @@ export default async function LandlordPropertiesPage() {
                 <p className="text-muted-foreground mt-1">Manage and update all your active property listings.</p>
             </div>
 
-            <LandlordPropertiesTable 
+            <PropertiesTable 
                 properties={properties || []} 
                 categories={filters?.categories || []} 
                 amenities={filters?.amenities || []} 

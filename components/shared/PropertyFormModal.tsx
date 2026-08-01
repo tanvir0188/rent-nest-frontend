@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { createProperty, updateProperty } from "../_actions/landlordActions";
+import { createProperty, updateProperty } from "@/app/dashboard/landlord/_actions/landlordActions";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 
@@ -29,9 +29,10 @@ export interface PropertyFormModalProps {
     onSetEditMode?: () => void;
     onClose: () => void;
     onSuccess?: () => void;
+    isAdmin?: boolean;
 }
 
-export function PropertyFormModal({ open, initialData, categories, amenities: amenitiesList, isViewOnly, onSetEditMode, onClose, onSuccess }: PropertyFormModalProps) {
+export function PropertyFormModal({ open, initialData, categories, amenities: amenitiesList, isViewOnly, onSetEditMode, onClose, onSuccess, isAdmin }: PropertyFormModalProps) {
     const router = useRouter();
     const isEdit = Boolean(initialData?.id);
     const [loading, setLoading] = useState(false);
@@ -44,7 +45,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
         description: "",
         categoryId: "",
         amenities: [] as string[],
-        isAvailable: true
+        isAvailable: true,
+        landLordId: ""
     });
 
     useEffect(() => {
@@ -63,7 +65,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                 description: initialData.description || "",
                 categoryId: initialData.categoryId || "",
                 amenities: initialData.amenities || [],
-                isAvailable: initialData.isAvailable ?? true
+                isAvailable: initialData.isAvailable ?? true,
+                landLordId: initialData.landLordId || ""
             });
         } else {
             setForm(prev => ({
@@ -74,7 +77,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                 description: "",
                 categoryId: prev.categoryId, // Keep the initially set category ID from filters if any
                 amenities: [],
-                isAvailable: true
+                isAvailable: true,
+                landLordId: ""
             }));
         }
     }, [initialData, open]);
@@ -91,7 +95,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
             description: form.description,
             categoryId: form.categoryId,
             amenities: form.amenities,
-            isAvailable: form.isAvailable
+            isAvailable: form.isAvailable,
+            ...(isAdmin && form.landLordId ? { landLordId: form.landLordId } : {})
         };
 
         try {
@@ -228,6 +233,20 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                                     </Badge>
                                 ))}
                             </div>
+                        </div>
+                    )}
+
+                    {isAdmin && (
+                        <div className="space-y-1.5">
+                            <Label htmlFor="landLordId" className="text-xs font-semibold">Landlord ID (Admin Only)</Label>
+                            <Input
+                                id="landLordId"
+                                value={form.landLordId}
+                                onChange={(e) => setForm({ ...form, landLordId: e.target.value })}
+                                placeholder="Paste Landlord User ID here..."
+                                disabled={isViewOnly}
+                                className="rounded-xl disabled:opacity-100 disabled:bg-zinc-50"
+                            />
                         </div>
                     )}
 

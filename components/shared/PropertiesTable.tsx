@@ -14,11 +14,11 @@ import { Button } from "@/components/ui/button";
 import { Plus, Eye, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PropertyFormModal } from "./PropertyFormModal";
-import { deleteProperty } from "../_actions/landlordActions";
+import { deleteProperty } from "@/app/dashboard/landlord/_actions/landlordActions";
 import { getPropertyDetails } from "@/app/(public)/_acitons/propertyActions";
 import { useRouter } from "next/navigation";
 
-export function LandlordPropertiesTable({ properties = [], categories = [], amenities = [] }: { properties: any[], categories: any[], amenities: any[] }) {
+export function PropertiesTable({ properties = [], categories = [], amenities = [], isAdmin = false }: { properties: any[], categories: any[], amenities: any[], isAdmin?: boolean }) {
     const router = useRouter();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
@@ -78,10 +78,13 @@ export function LandlordPropertiesTable({ properties = [], categories = [], amen
                     <h2 className="text-xl font-bold tracking-tight">Property Listings</h2>
                     <p className="text-xs text-muted-foreground">Manage your properties and active rentals.</p>
                 </div>
+                {/* render the button only if the user type is landlord */}
+                {!isAdmin && (
                 <Button onClick={handleAdd} className="rounded-xl gap-2 shadow-sm">
                     <Plus className="w-4 h-4" />
                     <span>Add Property</span>
                 </Button>
+                )}
             </div>
 
             <div className="border rounded-2xl overflow-hidden bg-white shadow-sm">
@@ -161,6 +164,7 @@ export function LandlordPropertiesTable({ properties = [], categories = [], amen
                 categories={categories}
                 amenities={amenities}
                 isViewOnly={isViewOnly}
+                isAdmin={isAdmin}
                 onSetEditMode={() => setIsViewOnly(false)}
                 onClose={() => {
                     setModalOpen(false);
