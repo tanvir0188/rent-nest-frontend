@@ -17,27 +17,39 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { createProperty, updateProperty } from "../_actions/landlordActions";
+import { Badge } from "@/components/ui/badge";
 
 export interface PropertyFormModalProps {
     open: boolean;
     initialData?: any | null;
+    categories: any[];
+    amenities: any[];
+    isViewOnly?: boolean;
+    onSetEditMode?: () => void;
     onClose: () => void;
     onSuccess?: () => void;
 }
 
-export function PropertyFormModal({ open, initialData, onClose, onSuccess }: PropertyFormModalProps) {
+export function PropertyFormModal({ open, initialData, categories, amenities: amenitiesList, isViewOnly, onSetEditMode, onClose, onSuccess }: PropertyFormModalProps) {
     const isEdit = Boolean(initialData?.id);
     const [loading, setLoading] = useState(false);
 
     const [form, setForm] = useState({
         title: "",
         price: "",
-        type: "Apartment",
+        type: "",
         location: "",
         description: "",
-        categoryId: "fb1d1bb0-aab8-4148-9f65-a5f920d225bc", // Default Category
+        categoryId: "",
+        amenities: [] as string[],
         isAvailable: true
     });
+
+    useEffect(() => {
+        if (open && !isEdit && categories.length > 0 && !form.categoryId) {
+            setForm(prev => ({ ...prev, categoryId: categories[0].id }));
+        }
+    }, [open, isEdit, categories]);
 
     useEffect(() => {
         if (initialData) {
@@ -47,19 +59,21 @@ export function PropertyFormModal({ open, initialData, onClose, onSuccess }: Pro
                 type: initialData.type || "Apartment",
                 location: initialData.location || "",
                 description: initialData.description || "",
-                categoryId: initialData.categoryId || "fb1d1bb0-aab8-4148-9f65-a5f920d225bc",
+                categoryId: initialData.categoryId || "",
+                amenities: initialData.amenities || [],
                 isAvailable: initialData.isAvailable ?? true
             });
         } else {
-            setForm({
+            setForm(prev => ({
                 title: "",
                 price: "",
                 type: "Apartment",
                 location: "",
                 description: "",
-                categoryId: "fb1d1bb0-aab8-4148-9f65-a5f920d225bc",
+                categoryId: prev.categoryId, // Keep the initially set category ID from filters if any
+                amenities: [],
                 isAvailable: true
-            });
+            }));
         }
     }, [initialData, open]);
 
@@ -74,6 +88,7 @@ export function PropertyFormModal({ open, initialData, onClose, onSuccess }: Pro
             location: form.location,
             description: form.description,
             categoryId: form.categoryId,
+            amenities: form.amenities,
             isAvailable: form.isAvailable
         };
 
@@ -96,15 +111,27 @@ export function PropertyFormModal({ open, initialData, onClose, onSuccess }: Pro
         }
     };
 
+    const toggleAmenity = (id: string) => {
+        if (isViewOnly) return;
+        setForm(prev => {
+            const isSelected = prev.amenities.includes(id);
+            if (isSelected) {
+                return { ...prev, amenities: prev.amenities.filter(a => a !== id) };
+            } else {
+                return { ...prev, amenities: [...prev.amenities, id] };
+            }
+        });
+    };
+
     return (
         <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
-            <DialogContent className="sm:max-w-md rounded-3xl p-6 bg-white">
+            <DialogContent className="sm:max-w-md rounded-3xl p-6 bg-white overflow-y-auto max-h-[90vh]">
                 <DialogHeader className="text-left">
                     <DialogTitle className="text-xl font-bold">
-                        {isEdit ? "Edit Property" : "Add New Property"}
+                        {isViewOnly ? "Property Details" : (isEdit ? "Edit Property" : "Add New Property")}
                     </DialogTitle>
                     <DialogDescription className="text-xs text-zinc-500">
-                        {isEdit ? "Update your property details below." : "Fill in the property details to list it for rent."}
+                        {isViewOnly ? "Review the details of this property." : (isEdit ? "Update your property details below." : "Fill in the property details to list it for rent.")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -117,7 +144,8 @@ export function PropertyFormModal({ open, initialData, onClose, onSuccess }: Pro
                             onChange={(e) => setForm({ ...form, title: e.target.value })}
                             placeholder="e.g. Modern 2 Bedroom Apartment"
                             required
-                            className="rounded-xl"
+                            disabled={isViewOnly}
+                            className="rounded-xl disabled:opacity-100 disabled:bg-zinc-50"
                         />
                     </div>
 
@@ -131,35 +159,74 @@ export function PropertyFormModal({ open, initialData, onClose, onSuccess }: Pro
                                 onChange={(e) => setForm({ ...form, price: e.target.value })}
                                 placeholder="25000"
                                 required
-                                className="rounded-xl"
+                                disabled={isViewOnly}
+                                className="rounded-xl disabled:opacity-100 disabled:bg-zinc-50"
                             />
                         </div>
 
                         <div className="space-y-1.5">
                             <Label htmlFor="type" className="text-xs font-semibold">Property Type</Label>
-                            <select
+                            <Input
                                 id="type"
                                 value={form.type}
                                 onChange={(e) => setForm({ ...form, type: e.target.value })}
-                                className="w-full h-10 px-3 rounded-xl border border-zinc-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                                placeholder="e.g. Apartment"
+                                required
+                                disabled={isViewOnly}
+                                className="rounded-xl disabled:opacity-100 disabled:bg-zinc-50"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="location" className="text-xs font-semibold">Location</Label>
+                            <Input
+                                id="location"
+                                value={form.location}
+                                onChange={(e) => setForm({ ...form, location: e.target.value })}
+                                placeholder="e.g. Dhanmondi, Dhaka"
+                                required
+                                disabled={isViewOnly}
+                                className="rounded-xl disabled:opacity-100 disabled:bg-zinc-50"
+                            />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="category" className="text-xs font-semibold">Category</Label>
+                            <select
+                                id="category"
+                                value={form.categoryId}
+                                onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
+                                className="w-full h-10 px-3 rounded-xl border border-zinc-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-100 disabled:bg-zinc-50"
+                                required
+                                disabled={isViewOnly}
                             >
-                                <option value="Apartment">Apartment</option>
-                                <option value="Sublet">Sublet</option>
+                                <option value="" disabled>Select Category</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.title}</option>
+                                ))}
                             </select>
                         </div>
                     </div>
 
-                    <div className="space-y-1.5">
-                        <Label htmlFor="location" className="text-xs font-semibold">Location</Label>
-                        <Input
-                            id="location"
-                            value={form.location}
-                            onChange={(e) => setForm({ ...form, location: e.target.value })}
-                            placeholder="e.g. Dhanmondi, Dhaka"
-                            required
-                            className="rounded-xl"
-                        />
-                    </div>
+                    {amenitiesList.length > 0 && (
+                        <div className="space-y-1.5">
+                            <Label className="text-xs font-semibold">Amenities</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {amenitiesList.map(amenity => (
+                                    <Badge
+                                        key={amenity.id}
+                                        variant={form.amenities.includes(amenity.id) ? "default" : "outline"}
+                                        className={isViewOnly ? "opacity-90" : "cursor-pointer"}
+                                        onClick={() => toggleAmenity(amenity.id)}
+                                    >
+                                        {amenity.title}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="space-y-1.5">
                         <Label htmlFor="description" className="text-xs font-semibold">Description</Label>
@@ -169,7 +236,8 @@ export function PropertyFormModal({ open, initialData, onClose, onSuccess }: Pro
                             onChange={(e) => setForm({ ...form, description: e.target.value })}
                             placeholder="Describe your property..."
                             rows={3}
-                            className="rounded-xl text-xs"
+                            disabled={isViewOnly}
+                            className="rounded-xl text-xs disabled:opacity-100 disabled:bg-zinc-50"
                         />
                     </div>
 
@@ -180,18 +248,25 @@ export function PropertyFormModal({ open, initialData, onClose, onSuccess }: Pro
                         </div>
                         <Switch
                             checked={form.isAvailable}
+                            disabled={isViewOnly}
                             onCheckedChange={(val) => setForm({ ...form, isAvailable: val })}
                         />
                     </div>
 
                     <DialogFooter className="pt-2">
                         <Button type="button" variant="outline" onClick={onClose} className="rounded-xl">
-                            Cancel
+                            {isViewOnly ? "Close" : "Cancel"}
                         </Button>
-                        <Button type="submit" disabled={loading} className="rounded-xl gap-2">
-                            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                            <span>{isEdit ? "Update Property" : "Create Property"}</span>
-                        </Button>
+                        {isViewOnly ? (
+                            <Button key="edit-btn" type="button" onClick={(e) => { e.preventDefault(); onSetEditMode?.(); }} className="rounded-xl">
+                                Edit Property
+                            </Button>
+                        ) : (
+                            <Button key="submit-btn" type="submit" disabled={loading} className="rounded-xl gap-2">
+                                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                                <span>{isEdit ? "Update Property" : "Create Property"}</span>
+                            </Button>
+                        )}
                     </DialogFooter>
                 </form>
             </DialogContent>

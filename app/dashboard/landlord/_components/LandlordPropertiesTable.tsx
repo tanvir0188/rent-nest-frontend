@@ -11,23 +11,43 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Eye, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PropertyFormModal } from "./PropertyFormModal";
 import { deleteProperty } from "../_actions/landlordActions";
+import { getPropertyDetails } from "@/app/(public)/_acitons/propertyActions";
 
-export function LandlordPropertiesTable({ properties = [] }: { properties: any[] }) {
+export function LandlordPropertiesTable({ properties = [], categories = [], amenities = [] }: { properties: any[], categories: any[], amenities: any[] }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    const handleEdit = (prop: any) => {
-        setSelectedProperty(prop);
-        setModalOpen(true);
+    const [isViewOnly, setIsViewOnly] = useState(false);
+
+    const handleView = async (id: string) => {
+        try {
+            const detail = await getPropertyDetails(id);
+            if (detail) {
+                // Flatten categoryId and amenities if nested
+                const propData = {
+                    ...detail,
+                    categoryId: (detail as any).categoryId || (detail as any).category?.id,
+                    amenities: (detail as any).amenities?.map((a: any) => a.id || a) || []
+                };
+                setSelectedProperty(propData);
+                setIsViewOnly(true);
+                setModalOpen(true);
+            } else {
+                toast.error("Failed to load property details");
+            }
+        } catch (error) {
+            toast.error("An error occurred");
+        }
     };
 
     const handleAdd = () => {
         setSelectedProperty(null);
+        setIsViewOnly(false);
         setModalOpen(true);
     };
 
@@ -110,10 +130,10 @@ export function LandlordPropertiesTable({ properties = [] }: { properties: any[]
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() => handleEdit(prop)}
+                                            onClick={() => handleView(prop.id)}
                                             className="rounded-xl hover:bg-zinc-100"
                                         >
-                                            <Edit className="w-4 h-4 text-zinc-600" />
+                                            <Eye className="w-4 h-4 text-zinc-600" />
                                         </Button>
                                         <Button
                                             variant="ghost"
@@ -135,6 +155,10 @@ export function LandlordPropertiesTable({ properties = [] }: { properties: any[]
             <PropertyFormModal
                 open={modalOpen}
                 initialData={selectedProperty}
+                categories={categories}
+                amenities={amenities}
+                isViewOnly={isViewOnly}
+                onSetEditMode={() => setIsViewOnly(false)}
                 onClose={() => {
                     setModalOpen(false);
                     setSelectedProperty(null);

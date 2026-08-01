@@ -7,7 +7,7 @@ import { revalidateTag } from "next/cache";
 export const requestRental = async (propertyId: string) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value || null;
-    
+
     if (!accessToken) {
         return { success: false, message: "Unauthorized" };
     }
@@ -40,8 +40,19 @@ export interface Property {
     price: number;
     location: string;
     type: string;
-    status: string;
     description?: string;
+    isAvailable: boolean;
+    categoryId?: string;
+    category?: { id: string, title: string };
+    amenities?: any[];
+    landLord?: {
+        name: string;
+        email: string;
+        profile: {
+            profilePhoto: string;
+            bio: string;
+        };
+    };
 }
 
 export const getPublicProperties = async (params?: { title?: string, type?: string, location?: string, price?: string | number }): Promise<Property[]> => {
@@ -51,11 +62,11 @@ export const getPublicProperties = async (params?: { title?: string, type?: stri
         if (params?.type) query.append("type", params.type);
         if (params?.location) query.append("location", params.location);
         if (params?.price) query.append("price", params.price.toString());
-        
+
         const queryString = query.toString() ? `?${query.toString()}` : "";
-        
+
         const res = await fetch(`${config.base_url}/api/properties${queryString}`, {
-            next: { revalidate: 60 }
+            next: { revalidate: 60, tags: ["properties"] }
         });
         if (res.ok) {
             const result = await res.json();
@@ -74,7 +85,7 @@ export const getPublicProperties = async (params?: { title?: string, type?: stri
 export const getPropertyDetails = async (id: string): Promise<Property | null> => {
     try {
         const res = await fetch(`${config.base_url}/api/properties/${id}`, {
-            next: { revalidate: 60 }
+            next: { revalidate: 60, tags: ["properties"] }
         });
         if (res.ok) {
             const result = await res.json();
@@ -86,5 +97,23 @@ export const getPropertyDetails = async (id: string): Promise<Property | null> =
     } catch (err) {
         console.error("Fetch failed", err);
         return null;
+    }
+}
+
+export const getFilters = async () => {
+    try {
+        const res = await fetch(`${config.base_url}/api/filters`, {
+            next: { revalidate: 60 }
+        });
+        if (res.ok) {
+            const result = await res.json();
+            return result.data || { categories: [], amenities: [] };
+        } else {
+            console.error(`API Error: ${res.status}`);
+            return { categories: [], amenities: [] };
+        }
+    } catch (err) {
+        console.error("Fetch failed", err);
+        return { categories: [], amenities: [] };
     }
 }

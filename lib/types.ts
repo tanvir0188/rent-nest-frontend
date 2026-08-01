@@ -25,10 +25,12 @@ export const LoginSchema = z.object({
 export const CreatePropertySchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters long").max(100, "Title must be at most 100 characters long"),
     price: z.coerce.number().min(1, "Price must be greater than 0"),
-    type: z.enum(["Apartment", "Sublet"]), 
-    location: z.string().min(2, "Location must be at least 2 characters long"),
+    type: z.string().min(1, "Type is required"),
     description: z.string().optional(),
-    amenities: z.string().optional(),
+    location: z.string().min(2, "Location must be at least 2 characters long"),
+    amenities: z.array(z.string()).optional(),
     categoryId: z.string().min(1, "Category is required"),
     isAvailable: z.boolean().optional().default(true),
 });
+
+export const UpdatePropertySchema = CreatePropertySchema.partial();

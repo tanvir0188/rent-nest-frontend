@@ -1,10 +1,13 @@
 import { getLandlordProperties } from "../_actions/landlordActions";
 import { LandlordPropertiesTable } from "../_components/LandlordPropertiesTable";
+import { getFilters } from "@/app/(public)/_acitons/propertyActions";
 
 export default async function LandlordPropertiesPage() {
-    const properties = await getLandlordProperties();
+    const [properties, filters] = await Promise.all([
+        getLandlordProperties(),
+        getFilters()
+    ]);
 
-    console.log(properties)
     return (
         <div className="space-y-6">
             <div>
@@ -12,7 +15,11 @@ export default async function LandlordPropertiesPage() {
                 <p className="text-muted-foreground mt-1">Manage and update all your active property listings.</p>
             </div>
 
-            <LandlordPropertiesTable properties={properties || []} />
+            <LandlordPropertiesTable 
+                properties={properties || []} 
+                categories={filters?.categories || []} 
+                amenities={filters?.amenities || []} 
+            />
         </div>
     );
 }

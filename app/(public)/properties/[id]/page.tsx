@@ -35,8 +35,8 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                     <h1 className="text-4xl font-bold">{property.title}</h1>
                     <p className="text-xl text-muted-foreground mt-2">{property.location}</p>
                 </div>
-                <Badge className="text-lg py-1 px-4" variant={property.status === "AVAILABLE" ? "default" : "secondary"}>
-                    {property.status}
+                <Badge className="text-lg py-1 px-4" variant={property.isAvailable ? "default" : "secondary"}>
+                    {property.isAvailable ? "AVAILABLE" : "UNAVAILABLE"}
                 </Badge>
             </div>
 
@@ -45,13 +45,37 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                     <div className="grid grid-cols-2 gap-4 text-lg">
                         <div><span className="font-bold text-muted-foreground mr-2">Price:</span> ${property.price}/mo</div>
                         <div><span className="font-bold text-muted-foreground mr-2">Type:</span> {property.type}</div>
+                        {property.category && (
+                            <div><span className="font-bold text-muted-foreground mr-2">Category:</span> {property.category.title}</div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
 
             <div className="mb-10">
                 <h2 className="text-2xl font-semibold mb-4">Description</h2>
-                <p className="text-lg leading-relaxed text-zinc-700">{property.description || "No description provided."}</p>
+                <p className="text-lg leading-relaxed text-zinc-700 whitespace-pre-wrap">
+                    {property.description || "No description provided."}
+                </p>
+            </div>
+
+            {property.amenities && property.amenities.length > 0 && (
+                <div className="mb-10">
+                    <h2 className="text-2xl font-semibold mb-4">Amenities</h2>
+                    <div className="flex flex-wrap gap-2">
+                        {property.amenities.map((amenity: any, idx: number) => (
+                            <Badge key={amenity.id || idx} variant="outline" className="text-sm py-1">
+                                {amenity.title || amenity}
+                            </Badge>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="mb-10">
+                <h2 className="text-2xl font-semibold mb-4">Landlord details</h2>
+                <p className="text-lg leading-relaxed text-zinc-700">Name: {property.landLord?.name || "No description provided."}</p>
+                <p className="text-lg leading-relaxed text-zinc-700">Email: {property.landLord?.email || "No description provided."}</p>
             </div>
 
             <div className="flex gap-4 p-6 border rounded-lg bg-zinc-100 items-center justify-between">

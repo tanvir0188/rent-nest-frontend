@@ -5,27 +5,12 @@ import { getMe } from "@/service/getMe";
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 
-export interface CreatePropertyPayload {
-    title: string;
-    price: number;
-    type: string;
-    location: string;
-    categoryId: string;
-    isAvailable?: boolean;
-    description?: string;
-    amenities?: string[] | string;
-}
+import { z } from "zod";
+import { CreatePropertySchema, UpdatePropertySchema } from "@/lib/types";
 
-export interface UpdatePropertyPayload {
-    title?: string;
-    price?: number;
-    type?: string;
-    location?: string;
-    categoryId?: string;
-    isAvailable?: boolean;
-    description?: string;
-    amenities?: string[] | string;
-}
+export type CreatePropertyPayload = z.infer<typeof CreatePropertySchema>;
+
+export type UpdatePropertyPayload = z.infer<typeof UpdatePropertySchema>;
 
 export const getLandlordProperties = async () => {
     const cookieStore = await cookies();
@@ -45,7 +30,7 @@ export const getLandlordProperties = async () => {
                 "Authorization": `Bearer ${accessToken}`
             },
             next: {
-                revalidate: 60 * 60 * 24,
+                revalidate: 60 * 60,
                 tags: ["properties"]
             }
         });
@@ -70,6 +55,16 @@ export const createProperty = async (payload: CreatePropertyPayload) => {
         return { success: false, message: "Unauthorized. Please log in." };
     }
 
+    const validatedFields = CreatePropertySchema.safeParse(payload);
+
+    if (!validatedFields.success) {
+        return {
+            success: false,
+            message: "Validation Error",
+            errors: validatedFields.error.flatten().fieldErrors
+        };
+    }
+
     try {
         const res = await fetch(`${config.base_url}/api/landlord/properties`, {
             method: "POST",
@@ -79,9 +74,9 @@ export const createProperty = async (payload: CreatePropertyPayload) => {
                 "Authorization": `Bearer ${accessToken}`
             },
             body: JSON.stringify({
-                ...payload,
-                price: Number(payload.price),
-                isAvailable: payload.isAvailable ?? true
+                ...validatedFields.data,
+                price: Number(validatedFields.data.price),
+                isAvailable: validatedFields.data.isAvailable ?? true
             })
         });
 
@@ -115,6 +110,16 @@ export const updateProperty = async (propertyId: string, payload: UpdateProperty
         return { success: false, message: "Unauthorized. Please log in." };
     }
 
+    const validatedFields = UpdatePropertySchema.safeParse(payload);
+    
+    if (!validatedFields.success) {
+        return {
+            success: false,
+            message: "Validation Error",
+            errors: validatedFields.error.flatten().fieldErrors
+        };
+    }
+
     try {
         const res = await fetch(`${config.base_url}/api/landlord/properties/${propertyId}`, {
             method: "PUT",
@@ -124,8 +129,8 @@ export const updateProperty = async (propertyId: string, payload: UpdateProperty
                 "Authorization": `Bearer ${accessToken}`
             },
             body: JSON.stringify({
-                ...payload,
-                ...(payload.price !== undefined ? { price: Number(payload.price) } : {})
+                ...validatedFields.data,
+                ...(validatedFields.data.price !== undefined ? { price: Number(validatedFields.data.price) } : {})
             })
         });
 
