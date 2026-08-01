@@ -13,8 +13,10 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { requestRental } from "../_acitons/propertyActions";
+import { useRouter } from "next/navigation";
 
 export function RequestRentDialog({ propertyId }: { propertyId: string }) {
+    const router = useRouter();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -24,6 +26,7 @@ export function RequestRentDialog({ propertyId }: { propertyId: string }) {
             const res = await requestRental(propertyId);
             if (res.success) {
                 toast.success(res.message || "Request sent successfully!");
+                router.refresh();
                 setOpen(false);
             } else {
                 toast.error(res.message || "Failed to send request.");

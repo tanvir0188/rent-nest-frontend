@@ -40,6 +40,10 @@ export default async function Sidebar() {
                         <Building className="w-5 h-5" />
                         <span>My Properties</span>
                     </Link>
+                    <Link href="/dashboard/landlord/requests" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
+                        <List className="w-5 h-5" />
+                        <span>Rental Requests</span>
+                    </Link>
                     <Link href="/dashboard/landlord/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-200 rounded-md transition-colors">
                         <User className="w-5 h-5" />
                         <span>My Profile</span>

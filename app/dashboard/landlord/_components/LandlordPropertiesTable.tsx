@@ -16,8 +16,10 @@ import { toast } from "sonner";
 import { PropertyFormModal } from "./PropertyFormModal";
 import { deleteProperty } from "../_actions/landlordActions";
 import { getPropertyDetails } from "@/app/(public)/_acitons/propertyActions";
+import { useRouter } from "next/navigation";
 
 export function LandlordPropertiesTable({ properties = [], categories = [], amenities = [] }: { properties: any[], categories: any[], amenities: any[] }) {
+    const router = useRouter();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -58,6 +60,7 @@ export function LandlordPropertiesTable({ properties = [], categories = [], amen
             const res = await deleteProperty(id);
             if (res.success) {
                 toast.success(res.message);
+                router.refresh();
             } else {
                 toast.error(res.message);
             }

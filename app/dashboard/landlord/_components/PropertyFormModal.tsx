@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { createProperty, updateProperty } from "../_actions/landlordActions";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 export interface PropertyFormModalProps {
     open: boolean;
@@ -31,6 +32,7 @@ export interface PropertyFormModalProps {
 }
 
 export function PropertyFormModal({ open, initialData, categories, amenities: amenitiesList, isViewOnly, onSetEditMode, onClose, onSuccess }: PropertyFormModalProps) {
+    const router = useRouter();
     const isEdit = Boolean(initialData?.id);
     const [loading, setLoading] = useState(false);
 
@@ -99,6 +101,7 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
 
             if (res.success) {
                 toast.success(res.message);
+                router.refresh();
                 onClose();
                 if (onSuccess) onSuccess();
             } else {
