@@ -14,7 +14,7 @@ export default async function AdminPaymentsPage({ searchParams }: { searchParams
                 <p className="text-zinc-500">View and manage all payment transactions.</p>
             </div>
 
-            <PaymentsTable payments={payments} />
+            <PaymentsTable payments={payments} isAdmin={true} />
 
             {meta && (
                 <div className="mt-6 flex justify-center">

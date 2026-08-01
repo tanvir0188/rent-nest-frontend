@@ -15,7 +15,7 @@ export const getPayments = async (page: number = 1, size: number = 10) => {
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
             },
-            next: { revalidate: 30 }
+            next: { revalidate: 0 }
         });
 
         if (res.ok) {

@@ -10,13 +10,34 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Eye, MoreHorizontal, CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { PaymentDetailsModal } from "./PaymentDetailsModal";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { updatePaymentStatus } from "@/app/dashboard/admin/_actions/adminActions";
+import { toast } from "sonner";
 
-
-export function PaymentsTable({ payments }: { payments: any[] }) {
+export function PaymentsTable({ payments, isAdmin = false }: { payments: any[], isAdmin?: boolean }) {
     const [selectedPayment, setSelectedPayment] = useState<any | null>(null);
+    const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+    const handleStatusUpdate = async (paymentId: string, status: "SUCCESS" | "PENDING" | "FAILED") => {
+        setUpdatingId(paymentId);
+        const res = await updatePaymentStatus(paymentId, status);
+        if (res.success) {
+            toast.success(res.message);
+        } else {
+            toast.error(res.message);
+        }
+        setUpdatingId(null);
+    };
 
     return (
         <>
@@ -50,15 +71,50 @@ export function PaymentsTable({ payments }: { payments: any[] }) {
                                         {new Date(payment.createdAt).toLocaleDateString()}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => setSelectedPayment(payment)}
-                                            className="rounded-xl hover:bg-zinc-200/60 gap-1.5"
-                                        >
-                                            <Eye className="w-4 h-4 text-zinc-600" />
-                                            <span>Details</span>
-                                        </Button>
+                                        {!isAdmin ? (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setSelectedPayment(payment)}
+                                                className="rounded-xl hover:bg-zinc-200/60 gap-1.5"
+                                            >
+                                                <Eye className="w-4 h-4 text-zinc-600" />
+                                                <span>Details</span>
+                                            </Button>
+                                        ) : (
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" className="h-8 w-8 p-0 rounded-xl hover:bg-zinc-200/60">
+                                                        <span className="sr-only">Open menu</span>
+                                                        {updatingId === payment.id ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin text-zinc-600" />
+                                                        ) : (
+                                                            <MoreHorizontal className="h-4 w-4 text-zinc-600" />
+                                                        )}
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-48 rounded-2xl">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuItem onClick={() => setSelectedPayment(payment)} className="rounded-xl cursor-pointer">
+                                                        <Eye className="mr-2 h-4 w-4 text-zinc-500" />
+                                                        View Details
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem onClick={() => handleStatusUpdate(payment.id, "SUCCESS")} className="rounded-xl cursor-pointer">
+                                                        <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
+                                                        Mark as Success
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleStatusUpdate(payment.id, "PENDING")} className="rounded-xl cursor-pointer">
+                                                        <Clock className="mr-2 h-4 w-4 text-yellow-600" />
+                                                        Mark as Pending
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleStatusUpdate(payment.id, "FAILED")} className="rounded-xl cursor-pointer">
+                                                        <XCircle className="mr-2 h-4 w-4 text-red-600" />
+                                                        Mark as Failed
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))

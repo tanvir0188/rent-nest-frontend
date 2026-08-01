@@ -396,3 +396,41 @@ export const editAmenity = async (id: string, title: string) => {
         return { success: false, message: "An unexpected error occurred" };
     }
 };
+
+export const updatePaymentStatus = async (paymentId: string, status: "SUCCESS" | "PENDING" | "FAILED") => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+        return { success: false, message: "Unauthorized. Please log in." };
+    }
+
+    try {
+        const res = await fetch(`${config.base_url}/api/admin/payments/status/${paymentId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ status })
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            return {
+                success: true,
+                message: result.message || `Payment marked as ${status} successfully!`
+            };
+        } else {
+            return {
+                success: false,
+                message: result.message || `Error: ${res.status}`
+            };
+        }
+    } catch (err) {
+        console.error("Failed to update payment status", err);
+        return { success: false, message: "An unexpected error occurred." };
+    }
+};
