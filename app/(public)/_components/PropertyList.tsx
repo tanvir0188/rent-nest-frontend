@@ -18,8 +18,8 @@ export default async function PropertyList({ searchParams }: { searchParams: { t
                             <CardHeader>
                                 <div className="flex justify-between items-start">
                                     <CardTitle>{prop.title}</CardTitle>
-                                    <Badge variant={prop.status === "AVAILABLE" ? "default" : "secondary"}>
-                                        {prop.status}
+                                    <Badge variant={prop.isAvailable ? "default" : "secondary"}>
+                                        {prop.isAvailable ? "AVAILABLE" : "UNAVAILABLE"}
                                     </Badge>
                                 </div>
                             </CardHeader>

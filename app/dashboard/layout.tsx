@@ -26,9 +26,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <Sidebar />
                     </Suspense>
                     <main className="flex-1 p-6">
-                        <DashboardContentWrapper>
-                            {children}
-                        </DashboardContentWrapper>
+                        <Suspense fallback={<div className="animate-pulse space-y-4"><Skeleton className="h-8 w-64" /><Skeleton className="h-4 w-96" /></div>}>
+                            <DashboardContentWrapper>
+                                {children}
+                            </DashboardContentWrapper>
+                        </Suspense>
                     </main>
                 </div>
             </div>

@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building, ClipboardList, Clock, CheckCircle, CheckSquare, XCircle, DollarSign, Star } from "lucide-react";
 import { getLandlordProperties, landlordOverview } from "./_actions/landlordActions";
-import { LandlordPropertiesTable } from "./_components/LandlordPropertiesTable";
 
 export default async function LandlordDashboardOverview() {
     const [overviewData, properties] = await Promise.all([
