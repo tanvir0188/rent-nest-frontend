@@ -13,8 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "./StatusBadge";
 import { getRentalDetails, createCheckoutSession } from "@/app/dashboard/tenant/_actions/tenantActions";
-import { MapPin, DollarSign, Calendar, Home, User, Mail, Info, Loader2, CreditCard } from "lucide-react";
+import { MapPin, DollarSign, Calendar, Home, User, Mail, Info, Loader2, CreditCard, Star } from "lucide-react";
 import { toast } from "sonner";
+import { ReviewModal } from "./ReviewModal";
 
 export interface RentalDetailsModalProps {
     rentalId: string | null;
@@ -34,13 +35,14 @@ export function RentalDetailsModal({
     const [details, setDetails] = useState<any>(initialData || null);
     const [loading, setLoading] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [showReviewModal, setShowReviewModal] = useState(false);
 
     useEffect(() => {
         if (!rentalId) return;
-        
+
         let isMounted = true;
         setLoading(true);
-        
+
         fetchDetailsAction(rentalId)
             .then((res) => {
                 if (isMounted && res.success && res.data) {
@@ -186,17 +188,32 @@ export function RentalDetailsModal({
                         Close
                     </Button>
                     {isTenant && status === "APPROVED" && (
-                        <Button 
-                            onClick={handlePayment} 
-                            disabled={isCheckingOut} 
+                        <Button
+                            onClick={handlePayment}
+                            disabled={isCheckingOut}
                             className="rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white"
                         >
                             {isCheckingOut ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CreditCard className="w-4 h-4 mr-2" />}
                             Make Payment
                         </Button>
                     )}
+                    {isTenant && status === "COMPLETED" && (
+                        <Button
+                            onClick={() => setShowReviewModal(true)}
+                            className="rounded-2xl bg-green-600 hover:bg-green-700 text-white"
+                        >
+                            <Star className="w-4 h-4 mr-2" />
+                            Leave Review
+                        </Button>
+                    )}
                 </DialogFooter>
             </DialogContent>
+            {showReviewModal && (
+                <ReviewModal
+                    rentalRequestId={rentalId}
+                    onClose={() => setShowReviewModal(false)}
+                />
+            )}
         </Dialog>
     );
 }

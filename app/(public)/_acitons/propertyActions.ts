@@ -53,6 +53,7 @@ export interface Property {
             bio: string;
         };
     };
+    reviews?: any[];
 }
 
 export const getPublicProperties = async (params?: { title?: string, type?: string, location?: string, price?: string | number }): Promise<Property[]> => {

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getMe } from "@/service/getMe";
 import { getPropertyDetails } from "../../_acitons/propertyActions";
 import { RequestRentDialog } from "../../_components/RequestRentDialog";
+import { Star } from "lucide-react";
 
 export default async function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
@@ -77,6 +78,38 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                 <p className="text-lg leading-relaxed text-zinc-700">Name: {property.landLord?.name || "No description provided."}</p>
                 <p className="text-lg leading-relaxed text-zinc-700">Email: {property.landLord?.email || "No description provided."}</p>
             </div>
+
+            {property.reviews && property.reviews.length > 0 && (
+                <div className="mb-10">
+                    <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+                        <Star className="w-6 h-6 text-amber-500 fill-amber-500" />
+                        Reviews
+                    </h2>
+                    <div className="space-y-4">
+                        {property.reviews.map((review: any) => (
+                            <Card key={review.id} className="bg-white shadow-sm border border-zinc-100">
+                                <CardContent className="p-5">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="font-semibold text-zinc-900">{review.user?.name || "Anonymous User"}</h3>
+                                        <div className="flex gap-1">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star 
+                                                    key={i} 
+                                                    className={`w-4 h-4 ${i < review.rating ? "fill-amber-400 text-amber-400" : "text-zinc-200"}`} 
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <p className="text-zinc-600 leading-relaxed">
+                                        {review.comment}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            )}
+
 
             <div className="flex gap-4 p-6 border rounded-lg bg-zinc-100 items-center justify-between">
                 <div>

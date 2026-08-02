@@ -75,6 +75,7 @@ export const getRentalDetails = async (rentalId: string) => {
 
         if (res.ok) {
             const data = await res.json();
+            console.log(data)
             return { success: true, data: data.data };
         }
         return { success: false, message: "Failed to fetch rental details" };
@@ -112,6 +113,35 @@ export const createCheckoutSession = async (rentalId: string) => {
         return { success: false, message: data?.message || "Failed to create checkout session" };
     } catch (err) {
         console.error("Failed to create checkout session", err);
+        return { success: false, message: "An unexpected error occurred" };
+    }
+}
+
+export const postReview = async (payload: { rentalRequestId: string, rating: number, comment: string }) => {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) return { success: false, message: "Unauthorized" };
+
+    try {
+        const res = await fetch(`${config.base_url}/api/reviews`, {
+            method: "POST",
+            headers: {
+                "Cookie": `accessToken=${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (res.ok) {
+            return { success: true, data: data?.data };
+        }
+        return { success: false, message: data?.message || "Failed to post review" };
+    } catch (err) {
+        console.error("Failed to post review", err);
         return { success: false, message: "An unexpected error occurred" };
     }
 }
