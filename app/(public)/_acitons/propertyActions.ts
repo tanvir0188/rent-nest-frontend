@@ -56,13 +56,15 @@ export interface Property {
     reviews?: any[];
 }
 
-export const getPublicProperties = async (params?: { title?: string, type?: string, location?: string, price?: string | number }): Promise<Property[]> => {
+export const getPublicProperties = async (params?: { title?: string, type?: string, location?: string, price?: string | number, categoryId?: string, amenity?: string }): Promise<Property[]> => {
     try {
         const query = new URLSearchParams();
         if (params?.title) query.append("title", params.title);
         if (params?.type) query.append("type", params.type);
         if (params?.location) query.append("location", params.location);
         if (params?.price) query.append("price", params.price.toString());
+        if (params?.categoryId) query.append("categoryId", params.categoryId);
+        if (params?.amenity) query.append("amenity", params.amenity);
 
         const queryString = query.toString() ? `?${query.toString()}` : "";
 

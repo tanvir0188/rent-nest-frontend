@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getPublicProperties } from "./_acitons/propertyActions";
+import { getPublicProperties, getFilters } from "./_acitons/propertyActions";
 import FilterSidebar from "./_components/FilterSidebar";
 import PropertyListWrapper from "./_components/PropertyListWrapper";
 import { Suspense } from "react";
@@ -14,6 +14,11 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
     const type = typeof resolvedParams.type === 'string' ? resolvedParams.type : undefined;
     const location = typeof resolvedParams.location === 'string' ? resolvedParams.location : undefined;
     const price = typeof resolvedParams.price === 'string' ? resolvedParams.price : undefined;
+    const categoryId = typeof resolvedParams.categoryId === 'string' ? resolvedParams.categoryId : undefined;
+    const amenity = typeof resolvedParams.amenity === 'string' ? resolvedParams.amenity : undefined;
+    const title = typeof resolvedParams.title === 'string' ? resolvedParams.title : undefined;
+
+    const filters = await getFilters();
 
     return (
 
@@ -23,18 +28,18 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
             <div className="flex flex-col md:flex-row gap-8">
                 <aside className="w-full md:w-1/4">
                     <Suspense fallback={<div className="p-6 bg-zinc-50 border rounded-xl h-64" />}>
-                        <FilterSidebar />
+                        <FilterSidebar categories={filters?.categories || []} amenities={filters?.amenities || []} />
                     </Suspense>
                 </aside>
                 <PropertyListWrapper serverKey={JSON.stringify(resolvedParams)}>
-                    <PropertyList params={{ type, location, price }} />
+                    <PropertyList params={{ type, location, price, categoryId, amenity, title }} />
                 </PropertyListWrapper>
             </div>
         </div>
     );
 }
 
-async function PropertyList({ params }: { params: { type?: string, location?: string, price?: string } }) {
+async function PropertyList({ params }: { params: { type?: string, location?: string, price?: string, categoryId?: string, amenity?: string, title?: string } }) {
     const properties = await getPublicProperties(params);
     return (
         <div className="flex-1">

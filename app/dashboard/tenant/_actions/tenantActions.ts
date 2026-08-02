@@ -131,6 +131,7 @@ export const postReview = async (payload: { rentalRequestId: string, rating: num
                 "Authorization": `Bearer ${accessToken}`,
                 "Content-Type": "application/json"
             },
+            next: { revalidate: 60, tags: ["properties"] },
             body: JSON.stringify(payload)
         });
 
