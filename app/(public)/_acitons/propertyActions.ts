@@ -38,6 +38,7 @@ export interface Property {
     id: string;
     title: string;
     price: number;
+    image: string;
     location: string;
     type: string;
     description?: string;

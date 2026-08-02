@@ -19,6 +19,7 @@ import { Loader2 } from "lucide-react";
 import { createProperty, updateProperty } from "@/app/dashboard/landlord/_actions/landlordActions";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { PropertyImage } from "@/components/shared/PropertyImage";
 
 export interface PropertyFormModalProps {
     open: boolean;
@@ -46,7 +47,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
         categoryId: "",
         amenities: [] as string[],
         isAvailable: true,
-        landLordId: ""
+        landLordId: "",
+        image: ""
     });
 
     useEffect(() => {
@@ -66,7 +68,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                 categoryId: initialData.categoryId || "",
                 amenities: initialData.amenities || [],
                 isAvailable: initialData.isAvailable ?? true,
-                landLordId: initialData.landLordId || ""
+                landLordId: initialData.landLordId || "",
+                image: initialData.image || ""
             });
         } else {
             setForm(prev => ({
@@ -78,7 +81,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                 categoryId: prev.categoryId, // Keep the initially set category ID from filters if any
                 amenities: [],
                 isAvailable: true,
-                landLordId: ""
+                landLordId: "",
+                image: ""
             }));
         }
     }, [initialData, open]);
@@ -96,6 +100,7 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
             categoryId: form.categoryId,
             amenities: form.amenities,
             isAvailable: form.isAvailable,
+            image: form.image || undefined,
             ...(isAdmin && form.landLordId ? { landLordId: form.landLordId } : {})
         };
 
@@ -144,6 +149,18 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
+                    {form.image && (
+                        <div className="rounded-2xl overflow-hidden border border-zinc-100 h-48 w-full bg-zinc-50 relative">
+                            <PropertyImage 
+                                src={form.image} 
+                                alt={form.title || "Property Image"} 
+                                fill
+                                sizes="(max-width: 448px) 100vw, 448px"
+                                className="object-cover"
+                            />
+                        </div>
+                    )}
+
                     <div className="space-y-1.5">
                         <Label htmlFor="title" className="text-xs font-semibold">Title</Label>
                         <Input
@@ -216,6 +233,19 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                                 ))}
                             </select>
                         </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <Label htmlFor="image" className="text-xs font-semibold">Image URL</Label>
+                        <Input
+                            id="image"
+                            type="url"
+                            value={form.image}
+                            onChange={(e) => setForm({ ...form, image: e.target.value })}
+                            placeholder="https://example.com/property-image.jpg"
+                            disabled={isViewOnly}
+                            className="rounded-xl disabled:opacity-100 disabled:bg-zinc-50"
+                        />
                     </div>
 
                     {amenitiesList.length > 0 && (

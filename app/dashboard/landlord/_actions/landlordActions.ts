@@ -113,7 +113,7 @@ export const updateProperty = async (propertyId: string, payload: UpdateProperty
     }
 
     const validatedFields = UpdatePropertySchema.safeParse(payload);
-    
+
     if (!validatedFields.success) {
         return {
             success: false,

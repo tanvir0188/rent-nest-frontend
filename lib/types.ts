@@ -26,6 +26,7 @@ export const CreatePropertySchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters long").max(100, "Title must be at most 100 characters long"),
     price: z.coerce.number().min(1, "Price must be greater than 0"),
     type: z.string().min(1, "Type is required"),
+    image: z.url("Image must be a valid URL").optional().or(z.literal("")),
     description: z.string().optional(),
     location: z.string().min(2, "Location must be at least 2 characters long"),
     amenities: z.array(z.string()).optional(),

@@ -7,6 +7,7 @@ import { getMe } from "@/service/getMe";
 import { getPropertyDetails } from "../../_acitons/propertyActions";
 import { RequestRentDialog } from "../../_components/RequestRentDialog";
 import { Star } from "lucide-react";
+import { PropertyImage } from "@/components/shared/PropertyImage";
 
 export default async function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
@@ -40,6 +41,19 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                     {property.isAvailable ? "AVAILABLE" : "UNAVAILABLE"}
                 </Badge>
             </div>
+
+            {property.image && (
+                <div className="mb-6 rounded-2xl overflow-hidden border border-zinc-200 shadow-sm h-[400px] w-full bg-zinc-50 relative">
+                    <PropertyImage 
+                        src={property.image} 
+                        alt={property.title} 
+                        fill
+                        sizes="(max-width: 896px) 100vw, 896px"
+                        priority
+                        className="object-cover hover:scale-102 transition-transform duration-300"
+                    />
+                </div>
+            )}
 
             <Card className="mb-8 bg-zinc-50/50">
                 <CardContent className="p-6">

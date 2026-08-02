@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   images: {
     remotePatterns: [
-      { hostname: 'static.vecteezy.com' },
-      { hostname: 'example.com' }
+      { protocol: 'http', hostname: '**' },
+      { protocol: 'https', hostname: '**' }
     ]
   }
 };

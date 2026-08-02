@@ -16,6 +16,7 @@ import { getRentalDetails, createCheckoutSession } from "@/app/dashboard/tenant/
 import { MapPin, DollarSign, Calendar, Home, User, Mail, Info, Loader2, CreditCard, Star } from "lucide-react";
 import { toast } from "sonner";
 import { ReviewModal } from "./ReviewModal";
+import { PropertyImage } from "@/components/shared/PropertyImage";
 
 export interface RentalDetailsModalProps {
     rentalId: string | null;
@@ -102,6 +103,18 @@ export function RentalDetailsModal({
                     </div>
                 ) : (
                     <div className="space-y-5 py-2">
+                        {property?.image && (
+                            <div className="rounded-2xl overflow-hidden border border-zinc-100 h-40 w-full bg-zinc-50 relative">
+                                <PropertyImage 
+                                    src={property.image} 
+                                    alt={property.title || "Property Image"} 
+                                    fill
+                                    sizes="(max-width: 512px) 100vw, 512px"
+                                    className="object-cover"
+                                />
+                            </div>
+                        )}
+
                         {/* Quick Stats Grid */}
                         <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-100">
                             <div className="space-y-1">

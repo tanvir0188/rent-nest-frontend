@@ -8,8 +8,9 @@ import PropertyListWrapper from "./_components/PropertyListWrapper";
 import { PaginationBlock } from "@/components/shared/PaginationBlock";
 import { Suspense } from "react";
 
-export default async function PropertiesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+import PropertyList from "./_components/PropertyList";
 
+export default async function PropertiesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const resolvedParams = await searchParams;
 
     const type = typeof resolvedParams.type === 'string' ? resolvedParams.type : undefined;
@@ -24,7 +25,6 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
     const filters = await getFilters();
 
     return (
-
         <div className="container mx-auto py-8">
             <h1 className="text-3xl font-bold mb-6">Available Properties</h1>
 
@@ -35,50 +35,9 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
                     </Suspense>
                 </aside>
                 <PropertyListWrapper serverKey={JSON.stringify(resolvedParams)}>
-                    <PropertyList params={{ type, location, price, categoryId, amenity, title, page, size }} />
+                    <PropertyList searchParams={{ type, location, price, categoryId, amenity, title, page, size }} />
                 </PropertyListWrapper>
             </div>
-        </div>
-    );
-}
-
-async function PropertyList({ params }: { params: { type?: string, location?: string, price?: string, categoryId?: string, amenity?: string, title?: string, page?: string, size?: string } }) {
-    const { data: properties, meta } = await getPublicProperties(params);
-    return (
-        <div className="flex-1">
-            {properties.length === 0 ? (
-                <p>No properties found.</p>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {properties.map((prop) => (
-                        <Card key={prop.id} className="flex flex-col">
-                            <CardHeader>
-                                <div className="flex justify-between items-start">
-                                    <CardTitle>{prop.title}</CardTitle>
-                                    <Badge variant={prop.isAvailable ? "default" : "secondary"}>
-                                        {prop.isAvailable ? "AVAILABLE" : "UNAVAILABLE"}
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="flex-1">
-                                <p className="text-2xl font-bold mb-2">${prop.price}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-                                <p className="text-muted-foreground">{prop.location}</p>
-                                <p className="text-sm mt-2 font-medium bg-secondary w-fit px-2 py-1 rounded">{prop.type}</p>
-                            </CardContent>
-                            <CardFooter>
-                                <Link href={`/properties/${prop.id}`} className="w-full">
-                                    <Button className="w-full">View Details</Button>
-                                </Link>
-                            </CardFooter>
-                        </Card>
-                    ))}
-                </div>
-            )}
-            {meta && properties.length > 0 && (
-                <div className="mt-8">
-                    <PaginationBlock meta={meta} />
-                </div>
-            )}
         </div>
     );
 }

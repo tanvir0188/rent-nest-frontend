@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { postReview } from "@/app/dashboard/tenant/_actions/tenantActions";
+import { useRouter } from "next/navigation";
 
 export interface ReviewModalProps {
     rentalRequestId: string | null;
@@ -21,6 +22,7 @@ export interface ReviewModalProps {
 }
 
 export function ReviewModal({ rentalRequestId, onClose }: ReviewModalProps) {
+    const router = useRouter();
     const [rating, setRating] = useState<number>(0);
     const [hoverRating, setHoverRating] = useState<number>(0);
     const [comment, setComment] = useState("");
@@ -45,6 +47,7 @@ export function ReviewModal({ rentalRequestId, onClose }: ReviewModalProps) {
 
         if (res.success) {
             toast.success("Review submitted successfully!");
+            router.refresh();
             onClose();
         } else {
             toast.error(res.message || "Failed to submit review.");

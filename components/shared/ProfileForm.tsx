@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { updateProfile } from "@/service/updateProfile"
 import { Loader2, User, Mail, FileText, Image as ImageIcon } from "lucide-react"
 
+import { useRouter } from "next/navigation"
+
 export interface ProfileFormProps {
     initialData?: {
         name?: string;
@@ -20,6 +22,7 @@ export interface ProfileFormProps {
 }
 
 export function ProfileForm({ initialData }: ProfileFormProps) {
+    const router = useRouter()
     const [name, setName] = useState(initialData?.name || "")
     const [bio, setBio] = useState(initialData?.bio || "")
     const [email, setEmail] = useState(initialData?.email || "")
@@ -40,7 +43,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
             if (res.success) {
                 toast.success(res.message || "Profile updated successfully!")
-                
+                router.refresh()
             } else {
                 toast.error(res.message || "Failed to update profile.")
             }
