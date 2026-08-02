@@ -56,7 +56,7 @@ export interface Property {
     reviews?: any[];
 }
 
-export const getPublicProperties = async (params?: { title?: string, type?: string, location?: string, price?: string | number, categoryId?: string, amenity?: string }): Promise<Property[]> => {
+export const getPublicProperties = async (params?: { title?: string, type?: string, location?: string, price?: string | number, categoryId?: string, amenity?: string, page?: number | string, size?: number | string }): Promise<{ data: Property[], meta: any }> => {
     try {
         const query = new URLSearchParams();
         if (params?.title) query.append("title", params.title);
@@ -65,6 +65,8 @@ export const getPublicProperties = async (params?: { title?: string, type?: stri
         if (params?.price) query.append("price", params.price.toString());
         if (params?.categoryId) query.append("categoryId", params.categoryId);
         if (params?.amenity) query.append("amenity", params.amenity);
+        if (params?.page) query.append("page", params.page.toString());
+        if (params?.size) query.append("size", params.size.toString());
 
         const queryString = query.toString() ? `?${query.toString()}` : "";
 
@@ -73,15 +75,17 @@ export const getPublicProperties = async (params?: { title?: string, type?: stri
         });
         if (res.ok) {
             const result = await res.json();
-            console.log(result.data);
-            return result.data || [];
+            return {
+                data: result.data || [],
+                meta: result.meta || null
+            };
         } else {
             console.error(`API Error: ${res.status}`);
-            return [];
+            return { data: [], meta: null };
         }
     } catch (err) {
         console.error("Fetch failed", err);
-        return [];
+        return { data: [], meta: null };
     }
 };
 

@@ -197,7 +197,7 @@ export function RentalDetailsModal({
                             Make Payment
                         </Button>
                     )}
-                    {isTenant && status === "COMPLETED" && (
+                    {isTenant && status === "ACTIVE" && (
                         <Button
                             onClick={() => setShowReviewModal(true)}
                             className="rounded-2xl bg-green-600 hover:bg-green-700 text-white"

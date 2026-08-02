@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getPublicProperties, getFilters } from "./_acitons/propertyActions";
 import FilterSidebar from "./_components/FilterSidebar";
 import PropertyListWrapper from "./_components/PropertyListWrapper";
+import { PaginationBlock } from "@/components/shared/PaginationBlock";
 import { Suspense } from "react";
 
 export default async function PropertiesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
@@ -17,6 +18,8 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
     const categoryId = typeof resolvedParams.categoryId === 'string' ? resolvedParams.categoryId : undefined;
     const amenity = typeof resolvedParams.amenity === 'string' ? resolvedParams.amenity : undefined;
     const title = typeof resolvedParams.title === 'string' ? resolvedParams.title : undefined;
+    const page = typeof resolvedParams.page === 'string' ? resolvedParams.page : "1";
+    const size = typeof resolvedParams.size === 'string' ? resolvedParams.size : "10";
 
     const filters = await getFilters();
 
@@ -32,15 +35,15 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
                     </Suspense>
                 </aside>
                 <PropertyListWrapper serverKey={JSON.stringify(resolvedParams)}>
-                    <PropertyList params={{ type, location, price, categoryId, amenity, title }} />
+                    <PropertyList params={{ type, location, price, categoryId, amenity, title, page, size }} />
                 </PropertyListWrapper>
             </div>
         </div>
     );
 }
 
-async function PropertyList({ params }: { params: { type?: string, location?: string, price?: string, categoryId?: string, amenity?: string, title?: string } }) {
-    const properties = await getPublicProperties(params);
+async function PropertyList({ params }: { params: { type?: string, location?: string, price?: string, categoryId?: string, amenity?: string, title?: string, page?: string, size?: string } }) {
+    const { data: properties, meta } = await getPublicProperties(params);
     return (
         <div className="flex-1">
             {properties.length === 0 ? (
@@ -69,6 +72,11 @@ async function PropertyList({ params }: { params: { type?: string, location?: st
                             </CardFooter>
                         </Card>
                     ))}
+                </div>
+            )}
+            {meta && properties.length > 0 && (
+                <div className="mt-8">
+                    <PaginationBlock meta={meta} />
                 </div>
             )}
         </div>

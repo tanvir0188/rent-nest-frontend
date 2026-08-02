@@ -77,11 +77,10 @@ export function ReviewModal({ rentalRequestId, onClose }: ReviewModalProps) {
                                     className="focus:outline-none transition-transform hover:scale-110"
                                 >
                                     <Star
-                                        className={`w-8 h-8 ${
-                                            (hoverRating || rating) >= star
+                                        className={`w-8 h-8 ${(hoverRating || rating) >= star
                                                 ? "fill-yellow-400 text-yellow-400"
                                                 : "text-zinc-300"
-                                        } transition-colors`}
+                                            } transition-colors`}
                                     />
                                 </button>
                             ))}
@@ -94,7 +93,7 @@ export function ReviewModal({ rentalRequestId, onClose }: ReviewModalProps) {
                             placeholder="Tell us about your stay..."
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
-                            className="min-h-[100px] rounded-xl resize-none bg-zinc-50 border-zinc-200"
+                            className="min-h-25 rounded-xl resize-none bg-zinc-50 border-zinc-200"
                         />
                     </div>
                 </div>

@@ -14,22 +14,31 @@ export interface PaginationBlockProps {
     meta: {
         totalItem: number;
         current_page: number;
-        next_page: number | null;
-        page_item: number;
+        next_page?: number | null;
+        page_item?: number;
     } | null;
+    pageSize?: number;
 }
 
-export function PaginationBlock({ meta }: PaginationBlockProps) {
+export function PaginationBlock({ meta, pageSize }: PaginationBlockProps) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    if (!meta || meta.totalItem <= meta.page_item) {
+    if (!meta) {
+        return null;
+    }
+
+    const sizeFromUrl = searchParams.get("size");
+    const limit = pageSize || (sizeFromUrl ? Number(sizeFromUrl) : 10);
+    const totalItem = Number(meta.totalItem);
+    const currentPage = Number(meta.current_page);
+
+    if (totalItem <= limit) {
         return null; // No need for pagination if items fit in a single page
     }
 
-    const totalPages = Math.ceil(meta.totalItem / meta.page_item);
-    const currentPage = meta.current_page;
+    const totalPages = Math.ceil(totalItem / limit);
 
     const createPageURL = (pageNumber: number) => {
         const params = new URLSearchParams(searchParams);
@@ -62,18 +71,20 @@ export function PaginationBlock({ meta }: PaginationBlockProps) {
     };
 
     const pages = getPageNumbers();
+    const hasNextPage = currentPage < totalPages;
+    const hasPrevPage = currentPage > 1;
 
     return (
         <Pagination className="justify-end mt-4">
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious
-                        href={currentPage > 1 ? createPageURL(currentPage - 1) : "#"}
+                        href={hasPrevPage ? createPageURL(currentPage - 1) : "#"}
                         onClick={(e) => {
-                            if (currentPage > 1) handlePageChange(e, currentPage - 1);
+                            if (hasPrevPage) handlePageChange(e, currentPage - 1);
                             else e.preventDefault();
                         }}
-                        className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={!hasPrevPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                 </PaginationItem>
 
@@ -92,12 +103,12 @@ export function PaginationBlock({ meta }: PaginationBlockProps) {
 
                 <PaginationItem>
                     <PaginationNext
-                        href={meta.next_page ? createPageURL(meta.next_page) : "#"}
+                        href={hasNextPage ? createPageURL(currentPage + 1) : "#"}
                         onClick={(e) => {
-                            if (meta.next_page) handlePageChange(e, meta.next_page);
+                            if (hasNextPage) handlePageChange(e, currentPage + 1);
                             else e.preventDefault();
                         }}
-                        className={!meta.next_page ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={!hasNextPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                 </PaginationItem>
             </PaginationContent>

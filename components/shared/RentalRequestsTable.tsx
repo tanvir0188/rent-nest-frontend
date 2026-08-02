@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Check, X, Loader2, Eye, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { StatusBadge } from "./StatusBadge";
 import { RentalDetailsModal } from "./RentalDetailsModal";
 import { getRentalDetails } from "@/app/dashboard/tenant/_actions/tenantActions";
 
@@ -121,15 +122,7 @@ export function RentalRequestsTable({
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge
-                                            variant={req.status === "APPROVED" || req.status === "COMPLETED" ? "default" : req.status === "REJECTED" ? "destructive" : "secondary"}
-                                            className={
-                                                req.status === "APPROVED" ? "bg-green-100 text-green-800 border-green-200" : 
-                                                req.status === "COMPLETED" ? "bg-blue-100 text-blue-800 border-blue-200" : ""
-                                            }
-                                        >
-                                            {req.status}
-                                        </Badge>
+                                        <StatusBadge status={req.status} />
                                     </TableCell>
                                     <TableCell className="text-right space-x-1">
                                         {(req.status === "PENDING" || isAdmin) && (

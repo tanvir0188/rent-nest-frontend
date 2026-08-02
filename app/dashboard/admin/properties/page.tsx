@@ -1,10 +1,19 @@
 import { PropertiesTable } from "@/components/shared/PropertiesTable";
 import { getPublicProperties, getFilters } from "@/app/(public)/_acitons/propertyActions";
 import { Card } from "@/components/ui/card";
+import { PaginationBlock } from "@/components/shared/PaginationBlock";
 
-export default async function AdminPropertiesPage() {
-    const [properties, filters] = await Promise.all([
-        getPublicProperties(),
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function AdminPropertiesPage({ searchParams }: Props) {
+    const sp = await searchParams;
+    const page = typeof sp.page === "string" ? sp.page : "1";
+    const size = typeof sp.size === "string" ? sp.size : "10";
+
+    const [{ data: properties, meta }, filters] = await Promise.all([
+        getPublicProperties({ page, size }),
         getFilters()
     ]);
 
@@ -24,6 +33,7 @@ export default async function AdminPropertiesPage() {
                     amenities={filters.amenities}
                     isAdmin={true}
                 />
+                {meta && <PaginationBlock meta={meta} />}
             </Card>
         </div>
     );
