@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { useFilterLoading } from "./FilterLoadingContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -29,6 +29,14 @@ export default function FilterSidebar({ categories = [], amenities = [], minPric
     const [amenity, setAmenity] = useState(searchParams.get("amenity") || "");
     const [title, setTitle] = useState(searchParams.get("title") || "");
 
+    useEffect(() => {
+        if (!isPending) {
+            setLoading(false);
+        } else {
+            setLoading(true);
+        }
+    }, [isPending, setLoading]);
+
     const handleApply = (e: React.FormEvent) => {
         e.preventDefault();
         const params = new URLSearchParams(searchParams.toString());
@@ -51,7 +59,6 @@ export default function FilterSidebar({ categories = [], amenities = [], minPric
         if (title) params.set("title", title);
         else params.delete("title");
 
-        setLoading(true);
         startTransition(() => {
             router.push(`/?${params.toString()}`);
         });
@@ -71,7 +78,6 @@ export default function FilterSidebar({ categories = [], amenities = [], minPric
         params.delete("categoryId");
         params.delete("amenity");
         params.delete("title");
-        setLoading(true);
         startTransition(() => {
             router.push(`/?${params.toString()}`);
         });

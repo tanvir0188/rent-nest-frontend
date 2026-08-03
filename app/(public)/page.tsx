@@ -40,7 +40,22 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
                     </Suspense>
                 </aside>
                 <PropertyListWrapper serverKey={JSON.stringify(resolvedParams)}>
-                    <PropertyList searchParams={{ type, location, price, categoryId, amenity, title, page, size }} />
+                    <Suspense fallback={
+                        <div className="flex-1">
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="flex flex-col gap-3 p-4 border rounded-xl">
+                                        <div className="h-6 w-3/4 bg-zinc-200 animate-pulse rounded" />
+                                        <div className="h-4 w-1/2 bg-zinc-200 animate-pulse rounded" />
+                                        <div className="h-20 w-full bg-zinc-200 animate-pulse rounded" />
+                                        <div className="h-10 w-full bg-zinc-200 animate-pulse rounded" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    }>
+                        <PropertyList searchParams={{ type, location, price, categoryId, amenity, title, page, size }} />
+                    </Suspense>
                 </PropertyListWrapper>
             </div>
         </div>
