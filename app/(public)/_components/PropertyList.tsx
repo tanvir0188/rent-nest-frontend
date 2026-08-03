@@ -37,7 +37,7 @@ export default async function PropertyList({ searchParams }: { searchParams: { t
                                 </div>
                             </CardHeader>
                             <CardContent className="flex-1">
-                                <p className="text-2xl font-bold mb-2">${prop.price}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
+                                <p className="text-2xl font-bold mb-2">BDT {prop.price}</p>
                                 <p className="text-muted-foreground">{prop.location}</p>
                                 <p className="text-sm mt-2 font-medium bg-secondary w-fit px-2 py-1 rounded">{prop.type}</p>
                             </CardContent>
@@ -50,7 +50,7 @@ export default async function PropertyList({ searchParams }: { searchParams: { t
                     ))}
                 </div>
             )}
-            
+
             {properties.meta && properties.data && properties.data.length > 0 && (
                 <div className="mt-8">
                     <PaginationBlock meta={properties.meta} />

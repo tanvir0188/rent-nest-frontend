@@ -151,9 +151,9 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
                     {form.image && (
                         <div className="rounded-2xl overflow-hidden border border-zinc-100 h-48 w-full bg-zinc-50 relative">
-                            <PropertyImage 
-                                src={form.image} 
-                                alt={form.title || "Property Image"} 
+                            <PropertyImage
+                                src={form.image}
+                                alt={form.title || "Property Image"}
                                 fill
                                 sizes="(max-width: 448px) 100vw, 448px"
                                 className="object-cover"
@@ -176,7 +176,7 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
 
                     <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                            <Label htmlFor="price" className="text-xs font-semibold">Rent Price ($)</Label>
+                            <Label htmlFor="price" className="text-xs font-semibold">Rent Price (BDT)</Label>
                             <Input
                                 id="price"
                                 type="number"

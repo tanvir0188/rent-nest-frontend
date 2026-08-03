@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, Calendar, User, Shield } from "lucide-react";
+import { ArrowLeft, Mail, Calendar, User, Shield, IdCard } from "lucide-react";
 import { ToggleStatusButton } from "../../_components/ToggleStatusButton";
 
 export default async function AdminUserDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -46,6 +46,15 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-xl bg-blue-50">
+                                <IdCard className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div>
+                                <p className="text-xs text-muted-foreground">UUID</p>
+                                <p className="font-medium">{user.id}</p>
+                            </div>
+                        </div>
                         <div className="flex items-center gap-3">
                             <div className="p-2 rounded-xl bg-blue-50">
                                 <User className="h-5 w-5 text-blue-600" />

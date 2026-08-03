@@ -80,10 +80,10 @@ export function PropertiesTable({ properties = [], categories = [], amenities = 
                 </div>
                 {/* render the button only if the user type is landlord */}
                 {!isAdmin && (
-                <Button onClick={handleAdd} className="rounded-xl gap-2 shadow-sm">
-                    <Plus className="w-4 h-4" />
-                    <span>Add Property</span>
-                </Button>
+                    <Button onClick={handleAdd} className="rounded-xl gap-2 shadow-sm">
+                        <Plus className="w-4 h-4" />
+                        <span>Add Property</span>
+                    </Button>
                 )}
             </div>
 
@@ -119,7 +119,7 @@ export function PropertiesTable({ properties = [], categories = [], amenities = 
                                     <TableCell className="text-zinc-600 capitalize">{prop.type}</TableCell>
                                     <TableCell className="text-zinc-600">{prop.location}</TableCell>
                                     <TableCell className="font-semibold text-zinc-900">
-                                        ${prop.price?.toLocaleString()}
+                                        BDT {prop.price?.toLocaleString()}
                                     </TableCell>
                                     <TableCell>
                                         {prop.isAvailable ? (

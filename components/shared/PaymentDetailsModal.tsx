@@ -92,7 +92,7 @@ export function PaymentDetailsModal({
                                     <DollarSign className="w-3.5 h-3.5 text-zinc-500" /> Amount
                                 </span>
                                 <p className="text-base font-bold text-zinc-900">
-                                    ${amount?.toLocaleString() || 0}
+                                    BDT {amount?.toLocaleString() || 0}
                                 </p>
                             </div>
 

@@ -157,7 +157,6 @@ export const adminUpdateRentalRequestStatus = async (requestId: string, status: 
         const result = await res.json().catch(() => ({}));
 
         if (res.ok) {
-            revalidateTag("admin-rentals", "max");
             return {
                 success: true,
                 message: result.message || `Request ${status.toLowerCase()} successfully!`
@@ -187,8 +186,7 @@ export const getAdminRentalRequests = async (page: number = 1, size: number = 10
                 "Authorization": `Bearer ${accessToken}`
             },
             next: {
-                revalidate: 60 * 60,
-                tags: ["admin-rentals"]
+                revalidate: 0,
             }
         });
 

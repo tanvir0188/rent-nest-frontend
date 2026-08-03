@@ -68,7 +68,7 @@ export function PaymentsTable({ payments, isAdmin = false }: { payments: any[], 
                                 <TableRow key={payment.id} className="hover:bg-zinc-50/50 transition-colors">
                                     <TableCell className="font-medium text-zinc-900">{payment.id.split("-")[0].toUpperCase()}</TableCell>
                                     <TableCell className="text-zinc-600">{payment.rentalRequest?.property?.title || "Unknown"}</TableCell>
-                                    <TableCell className="font-semibold">${payment.amount?.toLocaleString()}</TableCell>
+                                    <TableCell className="font-semibold">BDT {payment.amount?.toLocaleString()}</TableCell>
                                     <TableCell><StatusBadge status={payment.status} /></TableCell>
                                     <TableCell className="text-zinc-500 text-sm">
                                         {new Date(payment.createdAt).toLocaleDateString()}

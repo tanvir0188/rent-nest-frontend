@@ -87,6 +87,7 @@ export const createProperty = async (payload: CreatePropertyPayload) => {
 
         if (res.ok) {
             revalidateTag("properties", "max");
+            revalidateTag("filters", "max");
             return {
                 success: true,
                 message: result.message || "Property created successfully!",
@@ -140,6 +141,7 @@ export const updateProperty = async (propertyId: string, payload: UpdateProperty
 
         if (res.ok) {
             revalidateTag("properties", "max");
+            revalidateTag("filters", "max");
             return {
                 success: true,
                 message: result.message || "Property updated successfully!",

@@ -3,15 +3,24 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Slider } from "@/components/ui/slider";
 import { useFilterLoading } from "./FilterLoadingContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 
-export default function FilterSidebar({ categories = [], amenities = [] }: { categories?: any[], amenities?: any[] }) {
+interface FilterSidebarProps {
+    categories?: any[];
+    amenities?: any[];
+    minPrice?: number;
+    maxPrice?: number;
+}
+
+export default function FilterSidebar({ categories = [], amenities = [], minPrice = 0, maxPrice = 50000 }: FilterSidebarProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { setLoading } = useFilterLoading();
+    const [isPending, startTransition] = useTransition();
 
     const [type, setType] = useState(searchParams.get("type") || "");
     const [location, setLocation] = useState(searchParams.get("location") || "");
@@ -35,15 +44,17 @@ export default function FilterSidebar({ categories = [], amenities = [] }: { cat
 
         if (categoryId) params.set("categoryId", categoryId);
         else params.delete("categoryId");
-        
+
         if (amenity) params.set("amenity", amenity);
         else params.delete("amenity");
-        
+
         if (title) params.set("title", title);
         else params.delete("title");
 
         setLoading(true);
-        router.push(`/?${params.toString()}`);
+        startTransition(() => {
+            router.push(`/?${params.toString()}`);
+        });
     };
 
     const handleClear = () => {
@@ -61,7 +72,9 @@ export default function FilterSidebar({ categories = [], amenities = [] }: { cat
         params.delete("amenity");
         params.delete("title");
         setLoading(true);
-        router.push(`/?${params.toString()}`);
+        startTransition(() => {
+            router.push(`/?${params.toString()}`);
+        });
     }
 
     return (
@@ -76,7 +89,7 @@ export default function FilterSidebar({ categories = [], amenities = [] }: { cat
                     onChange={(e) => setTitle(e.target.value)}
                 />
             </div>
-            
+
             <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Type</label>
                 <Input
@@ -131,17 +144,30 @@ export default function FilterSidebar({ categories = [], amenities = [] }: { cat
 
             <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Max Price:</label>
-                <b>BDT: {price}</b>
+                <b>BDT: {price || minPrice}</b>
 
-                <div className="flex gap-2">
-
-                    0<Slider defaultValue={[100]} min={0} max={500000} step={1} onValueChange={(value) => setPrice(value[0].toString())} />
+                <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{minPrice}</span>
+                    <Slider
+                        defaultValue={[price ? Number(price) : maxPrice]}
+                        min={minPrice}
+                        max={maxPrice}
+                        step={1}
+                        onValueChange={(value) => setPrice(value[0].toString())}
+                    />
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{maxPrice}</span>
                 </div>
             </div>
 
             <div className="flex gap-2 mt-4">
-                <Button type="button" variant="outline" className="flex-1" onClick={handleClear}>Clear</Button>
-                <Button type="submit" className="flex-1">Apply</Button>
+                <Button type="button" variant="outline" className="flex-1" onClick={handleClear} disabled={isPending}>Clear</Button>
+                <Button type="submit" className="flex-1" disabled={isPending}>
+                    {isPending ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Applying...</>
+                    ) : (
+                        "Apply"
+                    )}
+                </Button>
             </div>
         </form>
     );

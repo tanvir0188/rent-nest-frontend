@@ -53,6 +53,7 @@ export function AdminUsersTable({ users = [] }: { users: any[] }) {
                 <Table>
                     <TableHeader className="bg-zinc-50/80">
                         <TableRow>
+                            <TableHead>UUID</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Role</TableHead>
@@ -71,6 +72,7 @@ export function AdminUsersTable({ users = [] }: { users: any[] }) {
                         ) : (
                             users.map((user: any) => (
                                 <TableRow key={user.id} className="hover:bg-zinc-50/50 transition-colors">
+                                    <TableCell className="font-medium text-zinc-900">{user.id.slice(0, 8)}</TableCell>
                                     <TableCell className="font-medium text-zinc-900">{user.name}</TableCell>
                                     <TableCell className="text-zinc-600">{user.email}</TableCell>
                                     <TableCell>

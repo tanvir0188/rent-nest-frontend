@@ -32,6 +32,7 @@ export const CreatePropertySchema = z.object({
     amenities: z.array(z.string()).optional(),
     categoryId: z.string().min(1, "Category is required"),
     isAvailable: z.boolean().optional().default(true),
+    landLordId: z.string().optional(),
 });
 
 export const UpdatePropertySchema = CreatePropertySchema.partial();

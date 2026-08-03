@@ -43,7 +43,7 @@ export function TenantRequestsTable({ requests }: { requests: any[] }) {
                                 <TableRow key={req.id} className="hover:bg-zinc-50/50 transition-colors">
                                     <TableCell className="font-medium text-zinc-900">{req.property.title}</TableCell>
                                     <TableCell className="text-zinc-600">{req.property.location}</TableCell>
-                                    <TableCell className="font-semibold">${req.property.price.toLocaleString()}</TableCell>
+                                    <TableCell className="font-semibold">BDT {req.property.price.toLocaleString()}</TableCell>
                                     <TableCell><StatusBadge status={req.status} /></TableCell>
                                     <TableCell className="text-zinc-500 text-sm">
                                         {new Date(req.createdAt).toLocaleDateString()}

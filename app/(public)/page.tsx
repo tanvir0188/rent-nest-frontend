@@ -31,7 +31,12 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
             <div className="flex flex-col md:flex-row gap-8">
                 <aside className="w-full md:w-1/4">
                     <Suspense fallback={<div className="p-6 bg-zinc-50 border rounded-xl h-64" />}>
-                        <FilterSidebar categories={filters?.categories || []} amenities={filters?.amenities || []} />
+                        <FilterSidebar
+                            categories={filters?.categories || []}
+                            amenities={filters?.amenities || []}
+                            minPrice={filters?.LowestPropertyPrice ?? 0}
+                            maxPrice={filters?.HighestPropertyPrice ?? 50000}
+                        />
                     </Suspense>
                 </aside>
                 <PropertyListWrapper serverKey={JSON.stringify(resolvedParams)}>

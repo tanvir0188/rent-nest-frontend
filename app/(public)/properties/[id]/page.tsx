@@ -58,7 +58,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
             <Card className="mb-8 bg-zinc-50/50">
                 <CardContent className="p-6">
                     <div className="grid grid-cols-2 gap-4 text-lg">
-                        <div><span className="font-bold text-muted-foreground mr-2">Price:</span> ${property.price}/mo</div>
+                        <div><span className="font-bold text-muted-foreground mr-2">Price:</span> BDT {property.price}</div>
                         <div><span className="font-bold text-muted-foreground mr-2">Type:</span> {property.type}</div>
                         {property.category && (
                             <div><span className="font-bold text-muted-foreground mr-2">Category:</span> {property.category.title}</div>

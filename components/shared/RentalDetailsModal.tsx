@@ -105,9 +105,9 @@ export function RentalDetailsModal({
                     <div className="space-y-5 py-2">
                         {property?.image && (
                             <div className="rounded-2xl overflow-hidden border border-zinc-100 h-40 w-full bg-zinc-50 relative">
-                                <PropertyImage 
-                                    src={property.image} 
-                                    alt={property.title || "Property Image"} 
+                                <PropertyImage
+                                    src={property.image}
+                                    alt={property.title || "Property Image"}
                                     fill
                                     sizes="(max-width: 512px) 100vw, 512px"
                                     className="object-cover"
@@ -122,7 +122,7 @@ export function RentalDetailsModal({
                                     <DollarSign className="w-3.5 h-3.5 text-zinc-500" /> Rent Price
                                 </span>
                                 <p className="text-base font-bold text-zinc-900">
-                                    ${property?.price?.toLocaleString() || 0} <span className="text-xs font-normal text-zinc-500">/ mo</span>
+                                    BDT {property?.price?.toLocaleString() || 0} <span className="text-xs font-normal text-zinc-500">/ mo</span>
                                 </p>
                             </div>
 

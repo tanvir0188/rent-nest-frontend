@@ -41,7 +41,7 @@ export const getRentalRequests = async (page: number = 1, size: number = 10) => 
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
             },
-            next: { tags: ["rental-requests"] }
+            next: { revalidate: 0, tags: ["rental-requests"] }
         });
 
         if (res.ok) {

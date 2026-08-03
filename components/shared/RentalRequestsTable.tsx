@@ -26,9 +26,9 @@ export interface RentalRequestsTableProps {
     isLandlord?: boolean;
 }
 
-export function RentalRequestsTable({ 
-    requests = [], 
-    onUpdateStatus, 
+export function RentalRequestsTable({
+    requests = [],
+    onUpdateStatus,
     onCompleteRequest,
     isAdmin = false,
     isLandlord = false
@@ -58,7 +58,7 @@ export function RentalRequestsTable({
     const handleComplete = async (id: string) => {
         if (!onCompleteRequest) return;
         if (!confirm("Are you sure you want to mark this request as completed?")) return;
-        
+
         setProcessingId(id);
         try {
             const res = await onCompleteRequest(id);
@@ -113,7 +113,7 @@ export function RentalRequestsTable({
                                         {req.property?.location || "Unknown"}
                                     </TableCell>
                                     <TableCell className="font-semibold text-zinc-900">
-                                        ${req.property?.price?.toLocaleString() || 0}
+                                        BDT {req.property?.price?.toLocaleString() || 0}
                                     </TableCell>
                                     <TableCell className="text-zinc-600 truncate max-w-37.5">
                                         <div className="flex flex-col">
@@ -153,7 +153,7 @@ export function RentalRequestsTable({
                                                 )}
                                             </>
                                         )}
-                                        
+
                                         {isLandlord && req.status === "ACTIVE" && onCompleteRequest && (
                                             <Button
                                                 variant="ghost"
@@ -186,9 +186,9 @@ export function RentalRequestsTable({
                     </TableBody>
                 </Table>
             </div>
-            
-            <RentalDetailsModal 
-                rentalId={selectedRentalId} 
+
+            <RentalDetailsModal
+                rentalId={selectedRentalId}
                 onClose={() => setSelectedRentalId(null)}
                 fetchDetailsAction={getRentalDetails}
             />

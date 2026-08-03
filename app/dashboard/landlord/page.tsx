@@ -57,7 +57,7 @@ export default async function LandlordDashboardOverview() {
         },
         {
             title: "Total Revenue",
-            value: `$${totalRevenue.toLocaleString()}`,
+            value: `BDT ${totalRevenue.toLocaleString()}`,
             icon: <DollarSign className="h-7 w-7 text-green-600" />,
             bgColor: "bg-green-50"
         },
