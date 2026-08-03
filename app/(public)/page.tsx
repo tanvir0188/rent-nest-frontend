@@ -20,7 +20,7 @@ export default async function PropertiesPage({ searchParams }: { searchParams: P
     const amenity = typeof resolvedParams.amenity === 'string' ? resolvedParams.amenity : undefined;
     const title = typeof resolvedParams.title === 'string' ? resolvedParams.title : undefined;
     const page = typeof resolvedParams.page === 'string' ? resolvedParams.page : "1";
-    const size = typeof resolvedParams.size === 'string' ? resolvedParams.size : "10";
+    const size = typeof resolvedParams.size === 'string' ? resolvedParams.size : "9";
 
     const filters = await getFilters();
 

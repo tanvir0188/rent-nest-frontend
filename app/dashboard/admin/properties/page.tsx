@@ -10,7 +10,7 @@ type Props = {
 export default async function AdminPropertiesPage({ searchParams }: Props) {
     const sp = await searchParams;
     const page = typeof sp.page === "string" ? sp.page : "1";
-    const size = typeof sp.size === "string" ? sp.size : "9";
+    const size = typeof sp.size === "string" ? sp.size : "10";
 
     const [{ data: properties, meta }, filters] = await Promise.all([
         getPublicProperties({ page, size }),
