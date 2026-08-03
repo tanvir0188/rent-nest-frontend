@@ -18,9 +18,10 @@ export interface PaginationBlockProps {
         page_item?: number;
     } | null;
     pageSize?: number;
+    onNavigate?: (url: string) => void;
 }
 
-export function PaginationBlock({ meta, pageSize }: PaginationBlockProps) {
+export function PaginationBlock({ meta, pageSize, onNavigate }: PaginationBlockProps) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -48,7 +49,12 @@ export function PaginationBlock({ meta, pageSize }: PaginationBlockProps) {
 
     const handlePageChange = (e: React.MouseEvent<HTMLAnchorElement>, page: number) => {
         e.preventDefault();
-        router.push(createPageURL(page));
+        const url = createPageURL(page);
+        if (onNavigate) {
+            onNavigate(url);
+        } else {
+            router.push(url);
+        }
     };
 
     // Calculate which page numbers to show

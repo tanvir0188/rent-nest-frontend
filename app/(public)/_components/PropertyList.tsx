@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PropertyImage } from "@/components/shared/PropertyImage";
-import { PaginationBlock } from "@/components/shared/PaginationBlock";
+import { PublicPagination } from "./PublicPagination";
 
 export default async function PropertyList({ searchParams }: { searchParams: { type?: string, location?: string, price?: string, categoryId?: string, amenity?: string, title?: string, page?: string, size?: string } }) {
     const properties = await getPublicProperties(searchParams);
@@ -53,7 +53,7 @@ export default async function PropertyList({ searchParams }: { searchParams: { t
 
             {properties.meta && properties.data && properties.data.length > 0 && (
                 <div className="mt-8">
-                    <PaginationBlock meta={properties.meta} />
+                    <PublicPagination meta={properties.meta} />
                 </div>
             )}
         </div>
