@@ -242,8 +242,7 @@ export const getLandlordRequests = async (page: number = 1, size: number = 10) =
                 "Authorization": `Bearer ${accessToken}`
             },
             next: {
-                revalidate: 60 * 60,
-                tags: ["landlord-requests"]
+                revalidate: 0
             }
         });
 
@@ -283,7 +282,6 @@ export const updateRequestStatus = async (requestId: string, status: "APPROVED" 
         const result = await res.json().catch(() => ({}));
 
         if (res.ok) {
-            revalidateTag("landlord-requests", "max");
             return {
                 success: true,
                 message: result.message || `Request ${status.toLowerCase()} successfully!`
@@ -320,7 +318,6 @@ export const completeRentalRequest = async (requestId: string) => {
         const result = await res.json().catch(() => ({}));
 
         if (res.ok) {
-            revalidateTag("landlord-requests", "max");
             return {
                 success: true,
                 message: result.message || "Request marked as completed successfully!"
