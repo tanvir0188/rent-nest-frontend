@@ -78,6 +78,8 @@ export default function FilterSidebar({ categories = [], amenities = [], minPric
         params.delete("categoryId");
         params.delete("amenity");
         params.delete("title");
+        params.delete("page");
+        params.delete("size");
         startTransition(() => {
             router.push(`/?${params.toString()}`);
         });
