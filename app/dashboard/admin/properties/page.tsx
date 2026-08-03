@@ -10,7 +10,7 @@ type Props = {
 export default async function AdminPropertiesPage({ searchParams }: Props) {
     const sp = await searchParams;
     const page = typeof sp.page === "string" ? sp.page : "1";
-    const size = typeof sp.size === "string" ? sp.size : "10";
+    const size = typeof sp.size === "string" ? sp.size : "9";
 
     const [{ data: properties, meta }, filters] = await Promise.all([
         getPublicProperties({ page, size }),
@@ -25,11 +25,11 @@ export default async function AdminPropertiesPage({ searchParams }: Props) {
                     Manage all properties across the platform. You can edit property details and reassign landlord IDs.
                 </p>
             </div>
-            
+
             <Card className="p-6 border-zinc-200/80 shadow-sm rounded-2xl bg-white">
                 <PropertiesTable
-                    properties={properties} 
-                    categories={filters.categories} 
+                    properties={properties}
+                    categories={filters.categories}
                     amenities={filters.amenities}
                     isAdmin={true}
                 />
