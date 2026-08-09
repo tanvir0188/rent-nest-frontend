@@ -60,7 +60,7 @@ export default function FilterSidebar({ categories = [], amenities = [], minPric
         else params.delete("title");
 
         startTransition(() => {
-            router.push(`/?${params.toString()}`);
+            router.push(`/properties/?${params.toString()}`);
         });
     };
 

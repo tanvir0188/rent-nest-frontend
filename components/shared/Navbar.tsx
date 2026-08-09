@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import NavbarAuth from "./NavbarAuth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ModeToggle } from "./ModeToggle";
 
 export default function Navbar() {
     return (
@@ -12,6 +13,7 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex gap-4 items-center">
+                    {/* <ModeToggle /> */}
                     <Suspense fallback={
                         <>
                             <Skeleton className="h-10 w-24" />
