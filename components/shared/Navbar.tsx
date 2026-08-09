@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Suspense } from "react";
 import NavbarAuth from "./NavbarAuth";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ModeToggle } from "./ModeToggle";
 
 export default function Navbar() {
     return (
