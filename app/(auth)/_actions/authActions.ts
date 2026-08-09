@@ -87,6 +87,19 @@ export const loginAction = async (redirectTo: string, prevState: LoginState, for
     }
 }
 
+export const fastLoginDemoAction = async (role: "tenant" | "landlord" | "admin", redirectTo: string) => {
+    let email = "";
+    if (role === "tenant") email = "arnob0188@tenant.com";
+    if (role === "landlord") email = "arnob0188@land.com";
+    if (role === "admin") email = "arnob0188@admin.com";
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", "arnob0188");
+
+    return loginAction(redirectTo, null as any, formData);
+}
+
 type RegisterState = {
     success: true,
     statusCode: number,
