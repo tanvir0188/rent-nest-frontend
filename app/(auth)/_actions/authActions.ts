@@ -154,3 +154,7 @@ export const registerAction = async (redirectTo: string, prevState: RegisterStat
     return result;
 
 }
+
+export const googleLoginAction = async () => {
+    redirect(`${config.base_url}/api/auth/google`);
+}

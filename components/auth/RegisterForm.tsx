@@ -1,6 +1,6 @@
 "use client"
 import { useActionState, useEffect } from "react"
-import { registerAction } from "@/app/(auth)/_actions/authActions"
+import { registerAction, googleLoginAction } from "@/app/(auth)/_actions/authActions"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -49,7 +49,14 @@ export default function RegisterForm() {
             <Button type="submit" className="w-full" disabled={pending}>
                 {pending ? "Registering..." : "Register"}
             </Button>
-            <p className="text-center">Already have an account? <Link className="text-blue-600 hover:underline" href="/auth/login">Login</Link></p>
+
+            <div className="flex flex-col gap-2 pt-4 mt-2 border-t border-zinc-200 dark:border-zinc-800">
+                <Button type="button" variant="default" className="w-full bg-red-600 hover:bg-red-700 text-white" disabled={pending} onClick={() => googleLoginAction()}>
+                    Continue with Google
+                </Button>
+            </div>
+
+            <p className="text-center mt-4">Already have an account? <Link className="text-blue-600 hover:underline" href="/auth/login">Login</Link></p>
         </form>
 
     );
