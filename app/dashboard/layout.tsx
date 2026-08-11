@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardLoadingProvider } from "@/components/shared/DashboardLoadingContext";
 import DashboardContentWrapper from "./_components/DashboardContentWrapper";
+import GoogleOAuthHandler from "./_components/GoogleOAuthHandler";
 
 function SidebarSkeleton() {
     return (
@@ -20,6 +21,9 @@ function SidebarSkeleton() {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
         <DashboardLoadingProvider>
+            <Suspense fallback={null}>
+                <GoogleOAuthHandler />
+            </Suspense>
             <div className="min-h-screen flex flex-col">
                 <div className="flex flex-1 flex-col md:flex-row">
                     <Suspense fallback={<SidebarSkeleton />}>
