@@ -11,7 +11,7 @@ export interface ProfileUpdatePayload {
     profilePhoto: string;
 }
 
-export const updateProfile = async (payload: ProfileUpdatePayload) => {
+export const updateProfile = async (formData: FormData) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value || null;
 
@@ -19,15 +19,20 @@ export const updateProfile = async (payload: ProfileUpdatePayload) => {
         return { success: false, message: "Unauthorized. Please log in." };
     }
 
+    const fetchFormData = new FormData();
+    const dataString = formData.get("data") as string;
+    if (dataString) fetchFormData.append("data", dataString);
+    const file = formData.get("file");
+    if (file) fetchFormData.append("file", file);
+
     try {
         const res = await fetch(`${config.base_url}/api/users/profile`, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
             },
-            body: JSON.stringify(payload)
+            body: fetchFormData
         });
 
         const result = await res.json().catch(() => ({}));

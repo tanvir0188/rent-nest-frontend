@@ -18,9 +18,10 @@ export default async function NavbarAuth() {
     const user = session?.success ? session.data : null;
 
     if (user) {
-        const userEmail = user.profile.email;
-        const userName = user.profile.name || userEmail;
-        const initials = userName.substring(0, 2).toUpperCase();
+        const userEmail = user.email || user.profile?.email || "";
+        const userName = user.name || user.profile?.name || userEmail;
+        const role = user.role || user.profile?.role || "USER";
+        const initials = userName ? userName.substring(0, 2).toUpperCase() : "US";
 
         return (
             <DropdownMenu>
@@ -36,7 +37,7 @@ export default async function NavbarAuth() {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
-                            <p className="text-sm font-medium leading-none">{user.profile.name || "User"}</p>
+                            <p className="text-sm font-medium leading-none">{userName}</p>
                             <p className="text-xs leading-none text-muted-foreground">
                                 {userEmail}
                             </p>
@@ -44,12 +45,12 @@ export default async function NavbarAuth() {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <Link href={`/dashboard/${user.profile.role.toLowerCase()}`} className="cursor-pointer w-full flex items-center">
+                        <Link href={`/dashboard/${role.toLowerCase()}`} className="cursor-pointer w-full flex items-center">
                             Dashboard
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href={`/dashboard/${user.profile.role.toLowerCase()}/profile`} className="cursor-pointer w-full flex items-center">
+                        <Link href={`/dashboard/${role.toLowerCase()}/profile`} className="cursor-pointer w-full flex items-center">
                             Profile
                         </Link>
                     </DropdownMenuItem>

@@ -49,12 +49,20 @@ export const getLandlordProperties = async (page: number = 1, size: number = 10)
     }
 };
 
-export const createProperty = async (payload: CreatePropertyPayload) => {
+export const createProperty = async (formData: FormData) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
 
     if (!accessToken) {
         return { success: false, message: "Unauthorized. Please log in." };
+    }
+
+    const dataString = formData.get("data") as string;
+    let payload = {};
+    if (dataString) {
+        try {
+            payload = JSON.parse(dataString);
+        } catch { }
     }
 
     const validatedFields = CreatePropertySchema.safeParse(payload);
@@ -67,19 +75,19 @@ export const createProperty = async (payload: CreatePropertyPayload) => {
         };
     }
 
+    const fetchFormData = new FormData();
+    if (dataString) fetchFormData.append("data", dataString);
+    const file = formData.get("file");
+    if (file) fetchFormData.append("file", file);
+
     try {
         const res = await fetch(`${config.base_url}/api/landlord/properties`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
             },
-            body: JSON.stringify({
-                ...validatedFields.data,
-                price: Number(validatedFields.data.price),
-                isAvailable: validatedFields.data.isAvailable ?? true
-            })
+            body: fetchFormData
         });
 
         const result = await res.json().catch(() => ({}));
@@ -105,12 +113,21 @@ export const createProperty = async (payload: CreatePropertyPayload) => {
     }
 };
 
-export const updateProperty = async (propertyId: string, payload: UpdatePropertyPayload) => {
+export const updateProperty = async (propertyId: string, formData: FormData) => {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
+    console.log('form data: ', formData);
 
     if (!accessToken) {
         return { success: false, message: "Unauthorized. Please log in." };
+    }
+
+    const dataString = formData.get("data") as string;
+    let payload = {};
+    if (dataString) {
+        try {
+            payload = JSON.parse(dataString);
+        } catch { }
     }
 
     const validatedFields = UpdatePropertySchema.safeParse(payload);
@@ -123,21 +140,23 @@ export const updateProperty = async (propertyId: string, payload: UpdateProperty
         };
     }
 
+    const fetchFormData = new FormData();
+    if (dataString) fetchFormData.append("data", dataString);
+    const file = formData.get("file");
+    if (file) fetchFormData.append("file", file);
+
     try {
         const res = await fetch(`${config.base_url}/api/landlord/properties/${propertyId}`, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
                 "Cookie": `accessToken=${accessToken}`,
                 "Authorization": `Bearer ${accessToken}`
             },
-            body: JSON.stringify({
-                ...validatedFields.data,
-                ...(validatedFields.data.price !== undefined ? { price: Number(validatedFields.data.price) } : {})
-            })
+            body: fetchFormData
         });
 
         const result = await res.json().catch(() => ({}));
+        console.log('update result: ', result);
 
         if (res.ok) {
             revalidateTag("properties", "max");

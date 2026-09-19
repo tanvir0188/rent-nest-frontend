@@ -26,20 +26,30 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     const [name, setName] = useState(initialData?.name || "")
     const [bio, setBio] = useState(initialData?.bio || "")
     const [email, setEmail] = useState(initialData?.email || "")
-    const [profilePhoto, setProfilePhoto] = useState(initialData?.profilePhoto || "")
+    const [profilePhoto, setProfilePhoto] = useState<string | File>(initialData?.profilePhoto || "")
     const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
 
+        const formData = new FormData();
+        const payloadData: any = {
+            name,
+            bio,
+            email,
+        };
+
+        if (profilePhoto instanceof File) {
+            formData.append("file", profilePhoto);
+        } else if (typeof profilePhoto === 'string' && profilePhoto.trim() !== "") {
+            payloadData.profilePhoto = profilePhoto;
+        }
+
+        formData.append("data", JSON.stringify(payloadData));
+
         try {
-            const res = await updateProfile({
-                name,
-                bio,
-                email,
-                profilePhoto
-            })
+            const res = await updateProfile(formData)
 
             if (res.success) {
                 toast.success(res.message || "Profile updated successfully!")
@@ -58,8 +68,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     const initials = name
         ? name.substring(0, 2).toUpperCase()
         : email
-        ? email.substring(0, 2).toUpperCase()
-        : "US"
+            ? email.substring(0, 2).toUpperCase()
+            : "US"
 
     return (
         <Card className="max-w-xl mx-auto shadow-xl border border-zinc-200/50 bg-white/80 backdrop-blur-md transition-all duration-300 hover:shadow-2xl">
@@ -77,7 +87,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                     {/* Avatar Preview Section */}
                     <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-zinc-50 border border-zinc-100">
                         <Avatar className="h-20 w-20 border-2 border-white shadow-md">
-                            <AvatarImage src={profilePhoto} alt={name || "Profile Picture"} />
+                            <AvatarImage src={typeof profilePhoto === 'string' ? profilePhoto : (profilePhoto instanceof File ? URL.createObjectURL(profilePhoto) : "")} alt={name || "Profile Picture"} />
                             <AvatarFallback className="bg-zinc-800 text-white text-xl font-bold">
                                 {initials}
                             </AvatarFallback>
@@ -123,17 +133,21 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                             />
                         </div>
 
-                        {/* Profile Photo URL Input */}
+                        {/* Profile Photo Input */}
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-zinc-700 flex items-center gap-1.5">
                                 <ImageIcon className="w-4 h-4 text-zinc-400" />
-                                Profile Photo URL
+                                Profile Photo
                             </label>
                             <Input
-                                type="text"
-                                placeholder="https://example.com/avatar.jpg"
-                                value={profilePhoto}
-                                onChange={(e) => setProfilePhoto(e.target.value)}
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setProfilePhoto(file);
+                                    }
+                                }}
                                 className="rounded-2xl"
                             />
                         </div>

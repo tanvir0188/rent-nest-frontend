@@ -91,7 +91,8 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
         e.preventDefault();
         setLoading(true);
 
-        const payload = {
+        const formData = new FormData();
+        const payloadData: any = {
             title: form.title,
             price: Number(form.price),
             type: form.type,
@@ -100,14 +101,21 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
             categoryId: form.categoryId,
             amenities: form.amenities,
             isAvailable: form.isAvailable,
-            image: form.image || undefined,
             ...(isAdmin && form.landLordId ? { landLordId: form.landLordId } : {})
         };
 
+        if (form.image instanceof File) {
+            formData.append("file", form.image);
+        } else if (typeof form.image === 'string' && form.image.trim() !== "") {
+            payloadData.image = form.image;
+        }
+
+        formData.append("data", JSON.stringify(payloadData));
+
         try {
             const res = isEdit
-                ? await updateProperty(initialData.id, payload)
-                : await createProperty(payload);
+                ? await updateProperty(initialData.id, formData)
+                : await createProperty(formData);
 
             if (res.success) {
                 toast.success(res.message);
@@ -152,7 +160,7 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                     {form.image && (
                         <div className="rounded-2xl overflow-hidden border border-zinc-100 h-48 w-full bg-zinc-50 relative">
                             <PropertyImage
-                                src={form.image}
+                                src={typeof form.image === 'string' ? form.image : URL.createObjectURL(form.image)}
                                 alt={form.title || "Property Image"}
                                 fill
                                 sizes="(max-width: 448px) 100vw, 448px"
@@ -236,13 +244,17 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="image" className="text-xs font-semibold">Image URL</Label>
+                        <Label htmlFor="image" className="text-xs font-semibold">Property Image</Label>
                         <Input
                             id="image"
-                            type="url"
-                            value={form.image}
-                            onChange={(e) => setForm({ ...form, image: e.target.value })}
-                            placeholder="https://example.com/property-image.jpg"
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setForm({ ...form, image: file });
+                                }
+                            }}
                             disabled={isViewOnly}
                             className="rounded-xl disabled:opacity-100 disabled:bg-zinc-50"
                         />

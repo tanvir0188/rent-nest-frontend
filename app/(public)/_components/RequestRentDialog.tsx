@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { requestRental } from "../_acitons/propertyActions";
 import { useRouter } from "next/navigation";
 
-export function RequestRentDialog({ propertyId }: { propertyId: string }) {
+export function RequestRentDialog({ propertyId, className }: { propertyId: string, className?: string }) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ export function RequestRentDialog({ propertyId }: { propertyId: string }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="lg">Request to Rent</Button>
+                <Button size="lg" className={className || "cursor-pointer"}>Request to Rent</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
