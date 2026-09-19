@@ -48,7 +48,7 @@ export function PropertyFormModal({ open, initialData, categories, amenities: am
         amenities: [] as string[],
         isAvailable: true,
         landLordId: "",
-        image: ""
+        image: "" as string | File
     });
 
     useEffect(() => {
